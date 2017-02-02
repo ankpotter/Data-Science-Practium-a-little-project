@@ -118,7 +118,6 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">minor project</h1>
 <h4 class="author"><em>Jullien Sue</em></h4>
-<h4 class="date"><em>2017年1月29日</em></h4>
 
 </div>
 
@@ -136,7 +135,7 @@ library(caret)</code></pre>
 <pre><code>## Loading required package: ggplot2</code></pre>
 <div id="load-data-and-make-the-names-unique" class="section level4">
 <h4>Load data and make the names unique</h4>
-<pre class="r"><code>setwd('C:/Users/zhongda/Desktop/practium')
+<pre class="r"><code>setwd('C:/Users/suzho/Desktop/practium')
 load('./samsungData.rda')
 colnames(samsungData) &lt;- make.names(names(samsungData), unique = TRUE)
 samsungData$activity &lt;- as.factor(samsungData$activity)</code></pre>
@@ -238,13 +237,13 @@ accuracy</code></pre>
 </div>
 <div id="using-top-two-featues" class="section level3">
 <h3>Using top two featues</h3>
-<pre class="r"><code>model3 &lt;- train(activity~tGravityAcc.min...X +angle.Y.gravityMean., data=train, method=&quot;rf&quot;,metric='Accuracy',ntree=10)</code></pre>
+<pre class="r"><code>model3 &lt;- train(activity~tGravityAcc.min...X +angle.Y.gravityMean. , data=train, method=&quot;rf&quot;,metric='Accuracy',ntree=10)</code></pre>
 <pre><code>## note: only 1 unique complexity parameters in default grid. Truncating the grid to 1 .</code></pre>
-<pre class="r"><code>result&lt;-predict(model2,test,type='raw')
+<pre class="r"><code>result&lt;-predict(model3,test,type='raw')
 truecase&lt;-sum(result==testActivity)
 accuracy&lt;-truecase/dim(test)[1]
 accuracy</code></pre>
-<pre><code>## [1] 0.846049</code></pre>
+<pre><code>## [1] 0.7479564</code></pre>
 </div>
 <div id="oops-not-quite-well-ha." class="section level3">
 <h3>Oops, not quite well ha.</h3>
