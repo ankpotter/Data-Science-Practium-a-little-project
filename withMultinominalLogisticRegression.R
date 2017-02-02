@@ -18,11 +18,11 @@ trainidx=sample(1:nr,0.7*nr)
 train=samsungData[trainidx,]
 test=samsungData[-trainidx,]
 
-#mlr feature selection top 5 features based on varimp
+#mlr feature selection top 50 features based on varimp
 model1=multinom(predicted~., data= train, MaxNWts=30000,trace=FALSE)
 imp=varImp(model1)
 imp$na=NA
-imp=rownames(imp[order(-imp$Overall),])[1:10]
+imp=rownames(imp[order(-imp$Overall),])[1:50]
 feat=gsub("\`", "", imp)
 
 
@@ -32,8 +32,9 @@ subsetTestD=subset(test,select = c(feat, 'predicted'))
 model2=multinom(predicted~., data=subsetTrainD, MaxNWts=30000)
 mean(predict(model2,newdata = subsetTestD)==subsetTestD$predicted)
 
-#stepAIC takes forever carry with caution!
-step=stepAIC(model2,direction="backward")
+#stepAIC takes forever carry with caution! aproximate 10mins
+#this is a stepwise selection out of 50 features from above
+step=stepAIC(model2,direction="both")
 step$anova
 
 #svm without selection
