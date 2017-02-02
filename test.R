@@ -2,15 +2,14 @@
 set.seed(1995)
 # library(mlbench)
 library(caret)
-setwd('C:/Users/zhongda/Desktop/practium')
 
-load('./samsungData.rda')
+
+load('/Users/Pagliacci/Desktop/DSC450/samsungData.rda')
 colnames(samsungData) <- make.names(names(samsungData), unique = TRUE)
 samsungData$activity <- as.factor(samsungData$activity)
 
 
 ##I think we should delete subject
-
 split=0.70
 trainIndex <- createDataPartition(samsungData$activity, p=split, list=FALSE)
 train <- samsungData[ trainIndex,]
