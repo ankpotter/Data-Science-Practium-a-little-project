@@ -1,0 +1,97 @@
+---
+title: "minor project"
+author: "Jullien Sue"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+### 1.Preparation
+
+Set seeds to make this code repeatable, import all necessary packages
+```{r set seed}
+set.seed(1995)
+library(caret)
+```
+
+#### Load data and make the names unique
+```{r }
+setwd('C:/Users/suzho/Desktop/practium')
+load('./samsungData.rda')
+colnames(samsungData) <- make.names(names(samsungData), unique = TRUE)
+samsungData$activity <- as.factor(samsungData$activity)
+```
+
+
+### Randomly split data into test(30%) and train(70%)
+```{r }
+split=0.70
+trainIndex <- createDataPartition(samsungData$activity, p=split, list=FALSE)
+train <- samsungData[ trainIndex,]
+test <- samsungData[-trainIndex,]
+testActivity<-test[,563]
+test<-test[,-563]
+```
+
+### First, train the model with all features with randomForest methods(multiply trees voting)
+
+Before train the model, I think the data already normalized,you can test it if you have time.
+Also, we have enough data and to build a fast model I didn't use CV.
+
+```{r }
+model1 <- train(activity~., data=train, method="rf",metric='Accuracy',ntree=10)
+model1
+
+```
+
+### See the accuracy of model1 in test data
+```{r }
+result<-predict(model1,test,type='raw')
+truecase<-sum(result==testActivity)
+accuracy<-truecase/dim(test)[1]
+accuracy
+
+```
+
+### See variable importance and choose top three as main features
+```{r }
+importance <- varImp(model1, scale=FALSE)
+# summarize importance
+print(importance)
+```
+
+
+### Build new model with top 3 features
+```{r }
+model2 <- train(activity~tGravityAcc.min...X +angle.Y.gravityMean.+angle.X.gravityMean. , data=train, method="rf",metric='Accuracy',ntree=10)
+result<-predict(model2,test,type='raw')
+truecase<-sum(result==testActivity)
+accuracy<-truecase/dim(test)[1]
+accuracy
+```
+
+
+### Comments about this model
+
+As you can see, the accuracy is more than 80%. It's pretty good.
+
+### Using top two featues
+```{r }
+model3 <- train(activity~tGravityAcc.min...X +angle.Y.gravityMean. , data=train, method="rf",metric='Accuracy',ntree=10)
+result<-predict(model3,test,type='raw')
+truecase<-sum(result==testActivity)
+accuracy<-truecase/dim(test)[1]
+accuracy
+```
+
+
+### Oops, not quite well ha.
+
