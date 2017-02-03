@@ -1,0 +1,82 @@
+---
+title: "Try2_with_RF_Plus_stepAIC"
+author: "Linxiao Bai"
+date: "2/2/2017"
+output: html_document
+---
+###Loading Packages and Data
+```{r results="hide"}
+library(MASS)
+library(nnet)
+library(randomForest)
+library(leaps)
+library(plyr)
+library(e1071)
+library(caret)
+#please install all
+#please change this directory
+load('/Users/Pagliacci/Desktop/DSC450/samsungData.rda')
+```
+###Changing Column Names and Response Data Type to Vector
+```{r}
+colnames(samsungData) = make.names(names(samsungData), unique = TRUE)
+samsungData$activity=as.factor(samsungData$activity)
+```
+###Some Basic Statisctics
+```{r}
+count(samsungData$activity)
+```
+###Resampling Data to Train/Test, 7:3
+```{r}
+#hold-out 7:3
+nr=nrow(samsungData)
+trainidx=sample(1:nr,0.7*nr)
+train=samsungData[trainidx,]
+test=samsungData[-trainidx,]
+```
+###Rough Selection with RF, Yield 50 variables, 
+#####This step takes about 1mins
+```{r}
+n=50
+model_RF_full = randomForest(activity~., data=train)
+imp=varImp(model_RF_full)
+imp$na=NA
+feat=rownames(imp[order(-imp$Overall),])[1:n]
+fml_RF_50=formula(paste("activity~",paste(feat,collapse="+")))
+```
+
+###Test Performance of Top50 Features on Test Data
+```{r}
+model_RF_50=randomForest(fml_RF_50,data=train)
+mean(predict(model_RF_50,newdata=test)==test$activity)
+```
+###Construct Multinomial Logistic Regression Model with 50 Features
+### and Test Accuracy on Test Data
+```{r}
+model_MM_50=multinom(fml_RF_50, data=train,trace=0)
+mean(predict(model_MM_50,newdata=test)==test$activity)
+```
+
+###Forward Selection with AIC out of 50 Features
+#####This step takes looooong, about several mins. Get coffee.
+```{r}
+step_result=stepAIC(multinom(activity~1,
+                 data=train,trace=0),scope=fml_RF_50,direction='forward')
+newfeat=attr(terms(step_result), "term.labels")
+
+fml_step_2=formula(paste("activity~",paste(newfeat[1:2],collapse="+")))
+fml_step_3=formula(paste("activity~",paste(newfeat[1:3],collapse="+")))
+
+
+fml_step_2
+fml_step_3
+```
+###Test Performance of New Features on Test Data with RF
+```{r}
+model_RF_2=randomForest(fml_step_2,data=train)
+model_RF_3=randomForest(fml_step_3,data=train)
+
+mean(predict(model_RF_2,newdata=test)==test$activity)
+mean(predict(model_RF_3,newdata=test)==test$activity)
+```
+With two variables we achieve above 80% accuracy, and above 90% with three. Congrats!
