@@ -5,7 +5,7 @@ date: "2/2/2017"
 output: html_document
 ---
 ###Loading Packages and Data
-```{r results="hide"}
+```{r results='hide', message=FALSE, warning=FALSE}
 library(MASS)
 library(nnet)
 library(randomForest)

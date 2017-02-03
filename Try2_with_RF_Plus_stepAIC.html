@@ -127,25 +127,12 @@ $(document).ready(function () {
 <h3>Loading Packages and Data</h3>
 <pre class="r"><code>library(MASS)
 library(nnet)
-library(randomForest)</code></pre>
-<pre><code>## randomForest 4.6-12</code></pre>
-<pre><code>## Type rfNews() to see new features/changes/bug fixes.</code></pre>
-<pre class="r"><code>library(leaps)</code></pre>
-<pre><code>## Warning: package 'leaps' was built under R version 3.2.5</code></pre>
-<pre class="r"><code>library(plyr)</code></pre>
-<pre><code>## Warning: package 'plyr' was built under R version 3.2.5</code></pre>
-<pre class="r"><code>library(e1071)
-library(caret)</code></pre>
-<pre><code>## Warning: package 'caret' was built under R version 3.2.5</code></pre>
-<pre><code>## Loading required package: lattice</code></pre>
-<pre><code>## Loading required package: ggplot2</code></pre>
-<pre><code>## Warning: package 'ggplot2' was built under R version 3.2.4</code></pre>
-<pre><code>## 
-## Attaching package: 'ggplot2'</code></pre>
-<pre><code>## The following object is masked from 'package:randomForest':
-## 
-##     margin</code></pre>
-<pre class="r"><code>#please install all
+library(randomForest)
+library(leaps)
+library(plyr)
+library(e1071)
+library(caret)
+#please install all
 #please change this directory
 load('/Users/Pagliacci/Desktop/DSC450/samsungData.rda')</code></pre>
 </div>
@@ -189,7 +176,7 @@ fml_RF_50=formula(paste(&quot;activity~&quot;,paste(feat,collapse=&quot;+&quot;)
 <h3>Test Performance of Top50 Features on Test Data</h3>
 <pre class="r"><code>model_RF_50=randomForest(fml_RF_50,data=train)
 mean(predict(model_RF_50,newdata=test)==test$activity)</code></pre>
-<pre><code>## [1] 0.975068</code></pre>
+<pre><code>## [1] 0.980961</code></pre>
 </div>
 <div id="construct-multinomial-logistic-regression-model-with-50-features" class="section level3">
 <h3>Construct Multinomial Logistic Regression Model with 50 Features</h3>
@@ -198,7 +185,7 @@ mean(predict(model_RF_50,newdata=test)==test$activity)</code></pre>
 <h3>and Test Accuracy on Test Data</h3>
 <pre class="r"><code>model_MM_50=multinom(fml_RF_50, data=train,trace=0)
 mean(predict(model_MM_50,newdata=test)==test$activity)</code></pre>
-<pre><code>## [1] 0.9451496</code></pre>
+<pre><code>## [1] 0.9433364</code></pre>
 </div>
 <div id="forward-selection-with-aic-out-of-50-features" class="section level3">
 <h3>Forward Selection with AIC out of 50 Features</h3>
@@ -206,860 +193,1110 @@ mean(predict(model_MM_50,newdata=test)==test$activity)</code></pre>
 <h5>This step takes looooong, about several mins. Get coffee.</h5>
 <pre class="r"><code>step_result=stepAIC(multinom(activity~1,
                  data=train,trace=0),scope=fml_RF_50,direction='forward')</code></pre>
-<pre><code>## Start:  AIC=18356.09
+<pre><code>## Start:  AIC=18360.2
 ## activity ~ 1
 ## 
 ##                                   Df     AIC
-## + tBodyAcc.max...X                 5  9602.1
-## + tBodyAcc.std...X                 5  9656.7
-## + fBodyAcc.bandsEnergy...1.16      5  9731.8
-## + fBodyAcc.bandsEnergy...1.24      5  9771.8
-## + fBodyAcc.energy...X              5  9788.0
-## + fBodyAcc.mad...X                 5  9837.6
-## + fBodyAccJerk.bandsEnergy...1.8   5  9893.0
-## + tBodyAcc.energy...X              5  9901.1
-## + fBodyAcc.mean...X                5 10015.1
-## + fBodyAccJerk.bandsEnergy...1.16  5 10166.0
-## + fBodyAccMag.mad..                5 10166.5
-## + tBodyAccJerk.mad...X             5 10426.7
-## + tBodyAccJerkMag.entropy..        5 10472.0
-## + fBodyAccJerk.std...X             5 10479.8
-## + tBodyAccJerkMag.energy..         5 10499.8
-## + tBodyAccJerkMag.mean..           5 10568.7
-## + tGravityAccMag.std..             5 10590.2
-## + tBodyAccMag.std..                5 10590.2
-## + tBodyAccMag.mad..                5 10915.4
-## + tGravityAccMag.mad..             5 10915.4
-## + fBodyAccMag.std..                5 10918.9
-## + tBodyAccJerk.entropy...X         5 11034.9
-## + fBodyAccMag.energy..             5 11068.8
-## + tBodyAccJerk.iqr...Y             5 11069.1
-## + angle.Y.gravityMean.             5 12225.5
-## + tGravityAcc.mean...Y             5 12242.5
-## + tGravityAcc.min...Y              5 12306.1
-## + tGravityAcc.max...Y              5 12322.7
-## + tGravityAcc.min...X              5 12387.6
-## + tGravityAcc.mean...X             5 12491.0
-## + tGravityAcc.energy...X           5 12494.0
-## + tGravityAcc.max...X              5 12656.1
-## + angle.X.gravityMean.             5 12672.3
-## + tGravityAcc.energy...Y           5 13986.2
-## + tGravityAcc.energy...Z           5 14918.7
-## + tGravityAcc.min...Z              5 14995.7
-## + tGravityAcc.mean...Z             5 15005.1
-## + tGravityAcc.max...Z              5 15045.0
-## + angle.Z.gravityMean.             5 15060.7
-## + tBodyAcc.correlation...X.Y       5 16471.3
-## + tGravityAcc.entropy...Y          5 16753.7
-## + tGravityAcc.arCoeff...X.1        5 16870.3
-## + fBodyGyro.maxInds.Z              5 17049.9
-## + tGravityAcc.arCoeff...Y.1        5 17185.4
-## + tGravityAcc.arCoeff...Z.1        5 17221.1
-## + tGravityAcc.arCoeff...Z.2        5 17305.1
-## + tGravityAcc.arCoeff...Z.3        5 17368.5
-## + tGravityAcc.arCoeff...Y.2        5 17391.1
-## + tGravityAcc.arCoeff...Z.4        5 17407.5
-## + tGravityAcc.arCoeff...Y.3        5 17555.2
-## &lt;none&gt;                               18356.1
+## + tBodyAcc.max...X                 5  9622.2
+## + fBodyAcc.bandsEnergy...1.16      5  9744.2
+## + fBodyAcc.energy...X              5  9806.0
+## + fBodyAcc.mad...X                 5  9831.8
+## + fBodyAccJerk.bandsEnergy...1.8   5  9939.3
+## + fBodyAccMag.mad..                5 10147.5
+## + fBodyAccJerk.bandsEnergy...1.16  5 10150.2
+## + fBodyAccMag.sma..                5 10326.1
+## + fBodyAccJerk.bandsEnergy...1.24  5 10357.9
+## + tBodyAccJerk.std...X             5 10397.9
+## + tBodyAccJerk.energy...X          5 10411.2
+## + tBodyAccJerk.mad...X             5 10441.5
+## + tBodyAccJerkMag.entropy..        5 10451.0
+## + fBodyAccJerk.std...X             5 10488.3
+## + tBodyAccJerkMag.energy..         5 10496.8
+## + fBodyAccJerk.mad...X             5 10502.7
+## + tBodyAccMag.std..                5 10555.4
+## + tGravityAccMag.std..             5 10555.4
+## + fBodyAccJerk.entropy...X         5 10563.7
+## + tBodyAccJerk.sma..               5 10565.1
+## + fBodyAccJerk.max...X             5 10580.0
+## + fBodyAccJerk.iqr...X             5 10610.5
+## + tBodyAccMag.mad..                5 10869.3
+## + tGravityAccMag.mad..             5 10869.3
+## + fBodyAccMag.std..                5 10889.1
+## + fBodyAccMag.energy..             5 11051.3
+## + angle.Y.gravityMean.             5 12218.8
+## + tGravityAcc.mean...Y             5 12244.3
+## + tGravityAcc.max...Y              5 12326.6
+## + tGravityAcc.min...Y              5 12350.0
+## + tGravityAcc.min...X              5 12428.3
+## + tGravityAcc.mean...X             5 12550.0
+## + tGravityAcc.energy...X           5 12563.6
+## + tGravityAcc.max...X              5 12736.5
+## + angle.X.gravityMean.             5 12770.9
+## + tGravityAcc.energy...Y           5 14019.8
+## + tGravityAcc.energy...Z           5 14953.0
+## + tGravityAcc.min...Z              5 14992.1
+## + tGravityAcc.mean...Z             5 15004.5
+## + tGravityAcc.max...Z              5 15049.2
+## + angle.Z.gravityMean.             5 15070.0
+## + tGravityAcc.arCoeff...X.2        5 16741.1
+## + tGravityAcc.entropy...Y          5 16776.2
+## + tGravityAcc.arCoeff...X.1        5 16883.7
+## + fBodyGyro.maxInds.Z              5 16983.0
+## + tGravityAcc.arCoeff...Y.1        5 17110.5
+## + tGravityAcc.arCoeff...Z.1        5 17227.0
+## + tGravityAcc.arCoeff...Z.2        5 17322.1
+## + tGravityAcc.arCoeff...Y.2        5 17334.7
+## + tGravityAcc.arCoeff...Z.3        5 17395.2
+## &lt;none&gt;                               18360.2
 ## 
-## Step:  AIC=9602.06
+## Step:  AIC=9622.16
 ## activity ~ tBodyAcc.max...X
 ## 
 ##                                   Df    AIC
-## + tGravityAcc.min...X              5 4982.3
-## + tGravityAcc.energy...X           5 5139.4
-## + tGravityAcc.mean...X             5 5141.9
-## + angle.X.gravityMean.             5 5285.4
-## + tGravityAcc.max...X              5 5342.2
-## + angle.Y.gravityMean.             5 5820.0
-## + tGravityAcc.mean...Y             5 5848.5
-## + tGravityAcc.min...Y              5 5888.8
-## + tGravityAcc.max...Y              5 5901.8
-## + tGravityAcc.energy...Y           5 6243.1
-## + tGravityAcc.energy...Z           5 7135.2
-## + tGravityAcc.arCoeff...X.1        5 7844.1
-## + tGravityAcc.mean...Z             5 7850.4
-## + tGravityAcc.min...Z              5 7860.6
-## + tGravityAcc.max...Z              5 7861.3
-## + angle.Z.gravityMean.             5 7867.3
-## + tGravityAcc.arCoeff...Y.1        5 7955.0
-## + tGravityAcc.arCoeff...Y.2        5 7995.2
-## + tGravityAcc.arCoeff...Z.1        5 8025.5
-## + tGravityAcc.arCoeff...Z.2        5 8073.7
-## + tGravityAcc.arCoeff...Y.3        5 8101.2
-## + tGravityAcc.arCoeff...Z.3        5 8158.7
-## + tGravityAcc.arCoeff...Z.4        5 8288.2
-## + fBodyGyro.maxInds.Z              5 8631.3
-## + tBodyAcc.correlation...X.Y       5 8694.9
-## + tBodyAccJerkMag.entropy..        5 8729.4
-## + tGravityAcc.entropy...Y          5 8743.5
-## + tBodyAccJerkMag.mean..           5 8933.5
-## + tBodyAccJerkMag.energy..         5 8956.5
-## + tBodyAccJerk.iqr...Y             5 9068.0
-## + tBodyAccJerk.entropy...X         5 9081.6
-## + fBodyAccJerk.std...X             5 9099.1
-## + fBodyAccMag.std..                5 9102.6
-## + fBodyAccMag.mad..                5 9229.3
-## + tBodyAccJerk.mad...X             5 9233.8
-## + tBodyAcc.std...X                 5 9279.1
-## + fBodyAccMag.energy..             5 9317.5
-## + fBodyAcc.bandsEnergy...1.16      5 9337.3
-## + tGravityAccMag.std..             5 9338.3
-## + tBodyAccMag.std..                5 9338.3
-## + tBodyAccMag.mad..                5 9384.5
-## + tGravityAccMag.mad..             5 9384.5
-## + fBodyAccJerk.bandsEnergy...1.16  5 9406.9
-## + fBodyAcc.bandsEnergy...1.24      5 9415.6
-## + tBodyAcc.energy...X              5 9428.1
-## + fBodyAcc.energy...X              5 9436.1
-## + fBodyAcc.mad...X                 5 9457.9
-## + fBodyAcc.mean...X                5 9473.3
-## + fBodyAccJerk.bandsEnergy...1.8   5 9492.7
-## &lt;none&gt;                               9602.1
+## + tGravityAcc.min...X              5 4947.5
+## + tGravityAcc.mean...X             5 5161.1
+## + tGravityAcc.energy...X           5 5165.5
+## + angle.X.gravityMean.             5 5338.5
+## + tGravityAcc.max...X              5 5393.9
+## + angle.Y.gravityMean.             5 5869.4
+## + tGravityAcc.mean...Y             5 5903.1
+## + tGravityAcc.max...Y              5 5947.4
+## + tGravityAcc.min...Y              5 5962.7
+## + tGravityAcc.energy...Y           5 6285.5
+## + tGravityAcc.energy...Z           5 7159.7
+## + tGravityAcc.arCoeff...X.1        5 7760.9
+## + tGravityAcc.arCoeff...X.2        5 7864.1
+## + tGravityAcc.min...Z              5 7864.6
+## + tGravityAcc.mean...Z             5 7868.7
+## + tGravityAcc.max...Z              5 7881.6
+## + angle.Z.gravityMean.             5 7893.2
+## + tGravityAcc.arCoeff...Y.1        5 7901.3
+## + tGravityAcc.arCoeff...Y.2        5 7952.4
+## + tGravityAcc.arCoeff...Z.1        5 8021.1
+## + tGravityAcc.arCoeff...Z.2        5 8077.3
+## + tGravityAcc.arCoeff...Z.3        5 8171.5
+## + fBodyGyro.maxInds.Z              5 8606.8
+## + tBodyAccJerkMag.entropy..        5 8726.1
+## + tGravityAcc.entropy...Y          5 8806.8
+## + tBodyAccJerk.sma..               5 8915.3
+## + tBodyAccJerkMag.energy..         5 8923.5
+## + fBodyAccMag.std..                5 9055.6
+## + fBodyAccJerk.mad...X             5 9068.6
+## + fBodyAccJerk.std...X             5 9084.9
+## + tBodyAccJerk.std...X             5 9116.4
+## + fBodyAccJerk.entropy...X         5 9159.6
+## + fBodyAccJerk.bandsEnergy...1.24  5 9183.3
+## + tBodyAccJerk.energy...X          5 9201.5
+## + fBodyAccMag.mad..                5 9223.5
+## + tBodyAccJerk.mad...X             5 9227.0
+## + fBodyAccJerk.iqr...X             5 9279.1
+## + fBodyAccMag.energy..             5 9301.9
+## + tBodyAccMag.std..                5 9319.2
+## + tGravityAccMag.std..             5 9319.2
+## + fBodyAcc.bandsEnergy...1.16      5 9327.5
+## + fBodyAccJerk.max...X             5 9353.8
+## + tBodyAccMag.mad..                5 9357.1
+## + tGravityAccMag.mad..             5 9357.1
+## + fBodyAccJerk.bandsEnergy...1.16  5 9420.2
+## + fBodyAcc.energy...X              5 9435.3
+## + fBodyAcc.mad...X                 5 9473.6
+## + fBodyAccMag.sma..                5 9497.5
+## + fBodyAccJerk.bandsEnergy...1.8   5 9503.4
+## &lt;none&gt;                               9622.2
 ## 
-## Step:  AIC=4982.3
+## Step:  AIC=4947.52
 ## activity ~ tBodyAcc.max...X + tGravityAcc.min...X
 ## 
 ##                                   Df    AIC
-## + tGravityAcc.mean...Y             5 3543.1
-## + angle.Y.gravityMean.             5 3545.4
-## + tGravityAcc.max...Y              5 3573.1
-## + tGravityAcc.min...Y              5 3577.2
-## + tGravityAcc.arCoeff...Y.2        5 3959.6
-## + tGravityAcc.arCoeff...Y.3        5 3974.1
-## + tGravityAcc.arCoeff...Y.1        5 3974.1
-## + tGravityAcc.arCoeff...X.1        5 4023.8
-## + tGravityAcc.arCoeff...Z.1        5 4085.1
-## + tGravityAcc.arCoeff...Z.2        5 4142.2
-## + tGravityAcc.arCoeff...Z.3        5 4225.3
-## + tBodyAccJerkMag.entropy..        5 4230.0
-## + tBodyAccJerkMag.mean..           5 4300.7
-## + tBodyAccJerkMag.energy..         5 4334.4
-## + tGravityAcc.arCoeff...Z.4        5 4337.6
-## + tBodyAcc.correlation...X.Y       5 4401.1
-## + tGravityAcc.energy...Y           5 4439.1
-## + angle.X.gravityMean.             5 4445.9
-## + fBodyGyro.maxInds.Z              5 4505.1
-## + tBodyAccJerk.entropy...X         5 4530.7
-## + tBodyAccJerk.iqr...Y             5 4532.0
-## + fBodyAccJerk.std...X             5 4544.5
-## + tGravityAcc.entropy...Y          5 4553.5
-## + tGravityAcc.max...Z              5 4554.1
-## + angle.Z.gravityMean.             5 4596.1
-## + tGravityAcc.mean...Z             5 4599.4
-## + tGravityAcc.energy...Z           5 4615.4
-## + tBodyAccJerk.mad...X             5 4619.5
-## + tGravityAcc.max...X              5 4638.3
-## + fBodyAccMag.std..                5 4643.6
-## + tGravityAcc.min...Z              5 4646.2
-## + fBodyAccMag.mad..                5 4648.4
-## + tGravityAcc.mean...X             5 4674.7
-## + fBodyAccMag.energy..             5 4709.8
-## + tGravityAcc.energy...X           5 4714.9
-## + tGravityAccMag.std..             5 4725.4
-## + tBodyAccMag.std..                5 4725.4
-## + fBodyAccJerk.bandsEnergy...1.16  5 4773.8
-## + tBodyAccMag.mad..                5 4783.5
-## + tGravityAccMag.mad..             5 4783.5
-## + fBodyAcc.bandsEnergy...1.16      5 4855.7
-## + fBodyAcc.mean...X                5 4895.7
-## + fBodyAcc.bandsEnergy...1.24      5 4900.1
-## + tBodyAcc.energy...X              5 4910.2
-## + fBodyAcc.energy...X              5 4910.4
-## + tBodyAcc.std...X                 5 4917.0
-## + fBodyAccJerk.bandsEnergy...1.8   5 4929.5
-## + fBodyAcc.mad...X                 5 4939.1
-## &lt;none&gt;                               4982.3
+## + angle.Y.gravityMean.             5 3564.8
+## + tGravityAcc.mean...Y             5 3565.2
+## + tGravityAcc.max...Y              5 3580.6
+## + tGravityAcc.min...Y              5 3608.6
+## + tGravityAcc.arCoeff...X.1        5 3935.9
+## + tGravityAcc.arCoeff...Y.2        5 3947.1
+## + tGravityAcc.arCoeff...Y.1        5 3958.4
+## + tGravityAcc.arCoeff...X.2        5 4011.2
+## + tGravityAcc.arCoeff...Z.1        5 4080.4
+## + tGravityAcc.arCoeff...Z.2        5 4139.6
+## + tBodyAccJerkMag.entropy..        5 4214.3
+## + tBodyAccJerk.sma..               5 4218.5
+## + tGravityAcc.arCoeff...Z.3        5 4227.0
+## + tBodyAccJerkMag.energy..         5 4273.9
+## + angle.X.gravityMean.             5 4417.8
+## + fBodyGyro.maxInds.Z              5 4463.9
+## + tGravityAcc.energy...Y           5 4467.4
+## + tGravityAcc.max...Z              5 4471.4
+## + fBodyAccJerk.std...X             5 4485.1
+## + fBodyAccJerk.mad...X             5 4502.3
+## + tBodyAccJerk.std...X             5 4517.4
+## + tGravityAcc.entropy...Y          5 4520.3
+## + tGravityAcc.mean...Z             5 4521.9
+## + angle.Z.gravityMean.             5 4523.9
+## + tGravityAcc.energy...Z           5 4571.6
+## + fBodyAccJerk.bandsEnergy...1.24  5 4571.9
+## + tGravityAcc.min...Z              5 4572.1
+## + tBodyAccJerk.energy...X          5 4576.7
+## + tBodyAccJerk.mad...X             5 4579.2
+## + fBodyAccMag.std..                5 4603.0
+## + tGravityAcc.max...X              5 4606.1
+## + fBodyAccJerk.entropy...X         5 4614.8
+## + fBodyAccMag.mad..                5 4625.3
+## + tGravityAcc.mean...X             5 4625.9
+## + tGravityAcc.energy...X           5 4669.6
+## + fBodyAccMag.energy..             5 4679.6
+## + fBodyAccJerk.iqr...X             5 4689.4
+## + fBodyAccMag.sma..                5 4694.5
+## + tBodyAccMag.std..                5 4699.3
+## + tGravityAccMag.std..             5 4699.3
+## + fBodyAccJerk.max...X             5 4703.8
+## + tBodyAccMag.mad..                5 4748.9
+## + tGravityAccMag.mad..             5 4748.9
+## + fBodyAccJerk.bandsEnergy...1.16  5 4753.4
+## + fBodyAcc.bandsEnergy...1.16      5 4798.4
+## + fBodyAcc.energy...X              5 4862.9
+## + fBodyAccJerk.bandsEnergy...1.8   5 4891.6
+## + fBodyAcc.mad...X                 5 4904.2
+## &lt;none&gt;                               4947.5
 ## 
-## Step:  AIC=3543.14
-## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + tGravityAcc.mean...Y
-## 
-##                                   Df    AIC
-## + tGravityAcc.arCoeff...Y.1        5 2566.1
-## + tGravityAcc.arCoeff...Y.2        5 2566.6
-## + tGravityAcc.arCoeff...X.1        5 2576.4
-## + tGravityAcc.arCoeff...Y.3        5 2600.1
-## + tGravityAcc.arCoeff...Z.1        5 2656.6
-## + tGravityAcc.arCoeff...Z.2        5 2705.0
-## + tGravityAcc.arCoeff...Z.3        5 2773.2
-## + tBodyAccJerkMag.entropy..        5 2777.0
-## + tBodyAccJerkMag.mean..           5 2838.6
-## + tBodyAccJerkMag.energy..         5 2858.6
-## + tGravityAcc.arCoeff...Z.4        5 2871.1
-## + tBodyAcc.correlation...X.Y       5 2930.0
-## + fBodyGyro.maxInds.Z              5 3057.6
-## + fBodyAccJerk.std...X             5 3069.0
-## + tBodyAccJerk.iqr...Y             5 3089.9
-## + tBodyAccJerk.entropy...X         5 3119.4
-## + tBodyAccJerk.mad...X             5 3142.5
-## + tGravityAcc.energy...Z           5 3160.6
-## + tGravityAcc.max...X              5 3213.2
-## + tGravityAcc.mean...X             5 3240.2
-## + fBodyAccMag.std..                5 3271.8
-## + tGravityAcc.energy...X           5 3278.1
-## + fBodyAccMag.mad..                5 3297.8
-## + tGravityAcc.max...Z              5 3309.4
-## + tGravityAcc.max...Y              5 3309.7
-## + tGravityAcc.min...Y              5 3310.9
-## + fBodyAccJerk.bandsEnergy...1.16  5 3324.6
-## + angle.Z.gravityMean.             5 3345.1
-## + tGravityAcc.mean...Z             5 3348.1
-## + fBodyAccMag.energy..             5 3350.6
-## + angle.X.gravityMean.             5 3364.7
-## + tGravityAccMag.std..             5 3365.6
-## + tBodyAccMag.std..                5 3365.6
-## + tGravityAcc.min...Z              5 3387.9
-## + tBodyAccMag.mad..                5 3403.4
-## + tGravityAccMag.mad..             5 3403.4
-## + fBodyAcc.bandsEnergy...1.16      5 3413.1
-## + fBodyAcc.mean...X                5 3445.2
-## + fBodyAcc.bandsEnergy...1.24      5 3455.3
-## + tBodyAcc.energy...X              5 3459.3
-## + tGravityAcc.entropy...Y          5 3461.9
-## + fBodyAcc.energy...X              5 3462.6
-## + tBodyAcc.std...X                 5 3466.0
-## + angle.Y.gravityMean.             5 3475.8
-## + fBodyAccJerk.bandsEnergy...1.8   5 3481.7
-## + tGravityAcc.energy...Y           5 3499.2
-## + fBodyAcc.mad...X                 5 3499.3
-## &lt;none&gt;                               3543.1
-## 
-## Step:  AIC=2566.13
-## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + tGravityAcc.mean...Y + 
-##     tGravityAcc.arCoeff...Y.1
+## Step:  AIC=3564.75
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean.
 ## 
 ##                                   Df    AIC
-## + tBodyAcc.correlation...X.Y       5 2010.5
-## + fBodyAccMag.std..                5 2265.9
-## + fBodyAccMag.mad..                5 2281.0
-## + tGravityAccMag.std..             5 2285.7
-## + tBodyAccMag.std..                5 2285.7
-## + fBodyAccMag.energy..             5 2286.8
-## + tGravityAcc.arCoeff...X.1        5 2292.3
-## + tBodyAccMag.mad..                5 2363.8
-## + tGravityAccMag.mad..             5 2363.8
-## + tBodyAccJerk.entropy...X         5 2393.3
-## + tGravityAcc.arCoeff...Z.1        5 2395.3
-## + tGravityAcc.arCoeff...Z.2        5 2407.3
-## + tGravityAcc.arCoeff...Z.3        5 2423.5
-## + fBodyAcc.bandsEnergy...1.16      5 2424.7
-## + tBodyAcc.std...X                 5 2430.8
-## + fBodyAcc.bandsEnergy...1.24      5 2441.5
-## + tGravityAcc.arCoeff...Z.4        5 2441.9
-## + tGravityAcc.energy...Z           5 2444.8
-## + tBodyAcc.energy...X              5 2446.5
-## + fBodyAcc.energy...X              5 2447.8
-## + tGravityAcc.entropy...Y          5 2468.4
-## + tGravityAcc.energy...Y           5 2480.2
-## + fBodyGyro.maxInds.Z              5 2483.5
-## + tGravityAcc.max...Z              5 2496.2
-## + tBodyAccJerkMag.entropy..        5 2496.8
-## + angle.Z.gravityMean.             5 2500.9
-## + tGravityAcc.mean...Z             5 2503.8
-## + tBodyAccJerk.iqr...Y             5 2508.6
-## + fBodyAccJerk.bandsEnergy...1.8   5 2509.9
-## + tBodyAccJerkMag.mean..           5 2512.6
-## + tGravityAcc.min...Z              5 2514.2
-## + tBodyAccJerkMag.energy..         5 2516.0
-## + tGravityAcc.max...X              5 2516.1
-## + fBodyAcc.mad...X                 5 2519.7
-## + fBodyAccJerk.std...X             5 2520.5
-## + tGravityAcc.mean...X             5 2526.3
-## + fBodyAccJerk.bandsEnergy...1.16  5 2537.2
-## + tGravityAcc.energy...X           5 2539.0
-## + angle.Y.gravityMean.             5 2542.9
-## + angle.X.gravityMean.             5 2543.2
-## + fBodyAcc.mean...X                5 2548.1
-## + tBodyAccJerk.mad...X             5 2550.9
-## + tGravityAcc.max...Y              5 2558.7
-## + tGravityAcc.min...Y              5 2562.8
-## + tGravityAcc.arCoeff...Y.2        5 2565.2
-## + tGravityAcc.arCoeff...Y.3        5 2565.8
-## &lt;none&gt;                               2566.1
+## + tGravityAcc.arCoeff...X.1        5 2544.0
+## + tGravityAcc.arCoeff...Y.1        5 2598.3
+## + tGravityAcc.arCoeff...Y.2        5 2603.2
+## + tGravityAcc.arCoeff...X.2        5 2620.1
+## + tGravityAcc.arCoeff...Z.1        5 2705.7
+## + tGravityAcc.arCoeff...Z.2        5 2758.1
+## + tBodyAccJerkMag.entropy..        5 2807.0
+## + tBodyAccJerk.sma..               5 2808.1
+## + tGravityAcc.arCoeff...Z.3        5 2837.3
+## + tBodyAccJerkMag.energy..         5 2852.4
+## + fBodyAccJerk.std...X             5 3064.6
+## + fBodyAccJerk.mad...X             5 3075.7
+## + fBodyGyro.maxInds.Z              5 3076.5
+## + tBodyAccJerk.std...X             5 3094.6
+## + fBodyAccJerk.bandsEnergy...1.24  5 3137.5
+## + tGravityAcc.energy...Z           5 3141.7
+## + tBodyAccJerk.energy...X          5 3149.0
+## + tBodyAccJerk.mad...X             5 3156.2
+## + fBodyAccJerk.entropy...X         5 3205.1
+## + tGravityAcc.max...X              5 3236.5
+## + tGravityAcc.mean...X             5 3253.6
+## + tGravityAcc.max...Y              5 3264.6
+## + fBodyAccMag.std..                5 3281.6
+## + fBodyAccJerk.iqr...X             5 3284.7
+## + tGravityAcc.energy...X           5 3294.1
+## + fBodyAccJerk.max...X             5 3307.2
+## + fBodyAccMag.mad..                5 3331.8
+## + tGravityAcc.max...Z              5 3332.5
+## + fBodyAccJerk.bandsEnergy...1.16  5 3356.4
+## + angle.Z.gravityMean.             5 3360.5
+## + tGravityAcc.mean...Z             5 3367.4
+## + fBodyAccMag.sma..                5 3369.0
+## + fBodyAccMag.energy..             5 3383.1
+## + angle.X.gravityMean.             5 3386.7
+## + tGravityAcc.min...Y              5 3397.2
+## + tBodyAccMag.std..                5 3402.5
+## + tGravityAccMag.std..             5 3402.5
+## + tGravityAcc.min...Z              5 3405.4
+## + fBodyAcc.bandsEnergy...1.16      5 3416.3
+## + tBodyAccMag.mad..                5 3432.5
+## + tGravityAccMag.mad..             5 3432.5
+## + fBodyAcc.energy...X              5 3478.0
+## + tGravityAcc.entropy...Y          5 3483.7
+## + tGravityAcc.mean...Y             5 3489.9
+## + fBodyAccJerk.bandsEnergy...1.8   5 3509.8
+## + fBodyAcc.mad...X                 5 3518.2
+## + tGravityAcc.energy...Y           5 3524.1
+## &lt;none&gt;                               3564.8
 ## 
-## Step:  AIC=2010.48
-## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + tGravityAcc.mean...Y + 
-##     tGravityAcc.arCoeff...Y.1 + tBodyAcc.correlation...X.Y
-## 
-##                                   Df    AIC
-## + tGravityAcc.arCoeff...X.1        5 1852.9
-## + tGravityAcc.energy...Z           5 1874.6
-## + fBodyAccMag.std..                5 1882.5
-## + tGravityAccMag.std..             5 1901.5
-## + tBodyAccMag.std..                5 1901.5
-## + fBodyAccMag.energy..             5 1901.9
-## + fBodyAccMag.mad..                5 1903.8
-## + fBodyAcc.bandsEnergy...1.16      5 1906.6
-## + tGravityAcc.arCoeff...Z.1        5 1908.2
-## + tBodyAccMag.mad..                5 1908.8
-## + tGravityAccMag.mad..             5 1908.8
-## + tGravityAcc.arCoeff...Z.2        5 1914.3
-## + tBodyAcc.std...X                 5 1916.5
-## + fBodyAcc.bandsEnergy...1.24      5 1917.6
-## + tGravityAcc.arCoeff...Z.3        5 1919.0
-## + tBodyAcc.energy...X              5 1922.0
-## + fBodyAcc.energy...X              5 1923.7
-## + tGravityAcc.arCoeff...Z.4        5 1925.2
-## + tGravityAcc.energy...Y           5 1939.3
-## + tBodyAccJerk.entropy...X         5 1943.3
-## + tGravityAcc.max...Z              5 1955.3
-## + tGravityAcc.entropy...Y          5 1958.4
-## + angle.Z.gravityMean.             5 1961.6
-## + tGravityAcc.mean...Z             5 1962.5
-## + fBodyAcc.mad...X                 5 1969.2
-## + tGravityAcc.min...Z              5 1969.8
-## + fBodyAccJerk.bandsEnergy...1.8   5 1970.4
-## + fBodyGyro.maxInds.Z              5 1974.2
-## + tBodyAccJerkMag.entropy..        5 1975.1
-## + tBodyAccJerkMag.energy..         5 1977.9
-## + tGravityAcc.max...X              5 1978.4
-## + angle.Y.gravityMean.             5 1984.5
-## + tBodyAccJerkMag.mean..           5 1989.8
-## + tGravityAcc.mean...X             5 1992.5
-## + fBodyAcc.mean...X                5 1993.0
-## + fBodyAccJerk.std...X             5 1994.1
-## + angle.X.gravityMean.             5 1995.0
-## + tGravityAcc.arCoeff...Y.3        5 2001.8
-## + tGravityAcc.arCoeff...Y.2        5 2002.2
-## + tGravityAcc.max...Y              5 2003.3
-## + fBodyAccJerk.bandsEnergy...1.16  5 2005.6
-## + tGravityAcc.energy...X           5 2006.0
-## + tBodyAccJerk.mad...X             5 2006.5
-## + tGravityAcc.min...Y              5 2006.9
-## &lt;none&gt;                               2010.5
-## + tBodyAccJerk.iqr...Y             5 2015.9
-## 
-## Step:  AIC=1852.88
-## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + tGravityAcc.mean...Y + 
-##     tGravityAcc.arCoeff...Y.1 + tBodyAcc.correlation...X.Y + 
+## Step:  AIC=2543.99
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
 ##     tGravityAcc.arCoeff...X.1
 ## 
 ##                                   Df    AIC
-## + fBodyAccMag.energy..             5 1746.3
-## + tGravityAccMag.std..             5 1751.6
-## + tBodyAccMag.std..                5 1751.6
-## + tBodyAccMag.mad..                5 1763.8
-## + tGravityAccMag.mad..             5 1763.8
-## + fBodyAccMag.mad..                5 1764.0
-## + tGravityAcc.energy...Z           5 1768.2
-## + fBodyAccMag.std..                5 1773.6
-## + tGravityAcc.arCoeff...Z.2        5 1781.9
-## + tGravityAcc.arCoeff...Z.3        5 1782.3
-## + tGravityAcc.arCoeff...Z.4        5 1782.5
-## + tGravityAcc.arCoeff...Z.1        5 1785.5
-## + tGravityAcc.energy...Y           5 1785.7
-## + tGravityAcc.entropy...Y          5 1796.3
-## + fBodyAcc.mean...X                5 1798.5
-## + fBodyAcc.mad...X                 5 1798.6
-## + angle.Y.gravityMean.             5 1801.1
-## + tBodyAcc.std...X                 5 1802.0
-## + tBodyAccJerk.entropy...X         5 1806.4
-## + fBodyAcc.bandsEnergy...1.24      5 1808.6
-## + tBodyAcc.energy...X              5 1809.2
-## + fBodyAcc.energy...X              5 1810.0
-## + tBodyAccJerkMag.energy..         5 1813.8
-## + fBodyAcc.bandsEnergy...1.16      5 1815.5
-## + tBodyAccJerk.mad...X             5 1831.6
-## + tBodyAccJerkMag.mean..           5 1832.6
-## + tBodyAccJerkMag.entropy..        5 1835.4
-## + fBodyGyro.maxInds.Z              5 1836.6
-## + fBodyAccJerk.bandsEnergy...1.8   5 1839.7
-## + tGravityAcc.max...Z              5 1841.3
-## + tGravityAcc.arCoeff...Y.2        5 1842.1
-## + tGravityAcc.arCoeff...Y.3        5 1842.6
-## + angle.X.gravityMean.             5 1843.7
-## + fBodyAccJerk.std...X             5 1845.3
-## + tGravityAcc.max...Y              5 1845.3
-## + tGravityAcc.mean...Z             5 1845.3
-## + tGravityAcc.min...Z              5 1846.4
-## + angle.Z.gravityMean.             5 1846.8
-## + fBodyAccJerk.bandsEnergy...1.16  5 1850.6
-## &lt;none&gt;                               1852.9
-## + tGravityAcc.min...Y              5 1854.5
-## + tBodyAccJerk.iqr...Y             5 1859.8
-## + tGravityAcc.energy...X           5 1860.0
-## + tGravityAcc.max...X              5 1860.0
-## + tGravityAcc.mean...X             5 1861.1
+## + tGravityAcc.arCoeff...Y.2        5 2251.3
+## + tGravityAcc.arCoeff...Y.1        5 2259.4
+## + tGravityAcc.arCoeff...Z.1        5 2275.5
+## + tGravityAcc.arCoeff...Z.2        5 2289.6
+## + tGravityAcc.arCoeff...Z.3        5 2310.2
+## + tGravityAcc.arCoeff...X.2        5 2317.9
+## + fBodyAccMag.energy..             5 2336.7
+## + fBodyAccMag.sma..                5 2342.7
+## + tBodyAccMag.std..                5 2353.8
+## + tGravityAccMag.std..             5 2353.8
+## + fBodyAccMag.mad..                5 2364.9
+## + tBodyAccJerkMag.entropy..        5 2375.2
+## + tBodyAccJerkMag.energy..         5 2376.7
+## + fBodyGyro.maxInds.Z              5 2377.9
+## + tBodyAccJerk.sma..               5 2381.3
+## + fBodyAccMag.std..                5 2381.6
+## + tGravityAcc.energy...Z           5 2411.7
+## + tBodyAccMag.mad..                5 2414.7
+## + tGravityAccMag.mad..             5 2414.7
+## + tGravityAcc.entropy...Y          5 2431.4
+## + tGravityAcc.energy...Y           5 2474.1
+## + fBodyAccJerk.bandsEnergy...1.8   5 2488.8
+## + fBodyAcc.energy...X              5 2495.8
+## + fBodyAcc.bandsEnergy...1.16      5 2500.4
+## + tBodyAccJerk.energy...X          5 2501.9
+## + tGravityAcc.max...Y              5 2503.0
+## + fBodyAcc.mad...X                 5 2506.1
+## + fBodyAccJerk.bandsEnergy...1.16  5 2506.6
+## + tBodyAccJerk.mad...X             5 2509.7
+## + fBodyAccJerk.bandsEnergy...1.24  5 2511.2
+## + tBodyAccJerk.std...X             5 2514.8
+## + tGravityAcc.mean...Y             5 2515.7
+## + fBodyAccJerk.iqr...X             5 2517.7
+## + fBodyAccJerk.std...X             5 2520.5
+## + fBodyAccJerk.mad...X             5 2521.8
+## + fBodyAccJerk.max...X             5 2529.1
+## + fBodyAccJerk.entropy...X         5 2530.6
+## + tGravityAcc.min...Y              5 2540.1
+## + angle.Z.gravityMean.             5 2541.2
+## &lt;none&gt;                               2544.0
+## + tGravityAcc.mean...Z             5 2544.0
+## + tGravityAcc.energy...X           5 2544.3
+## + tGravityAcc.max...Z              5 2544.5
+## + angle.X.gravityMean.             5 2544.8
+## + tGravityAcc.min...Z              5 2545.4
+## + tGravityAcc.max...X              5 2546.0
+## + tGravityAcc.mean...X             5 2548.0
 ## 
-## Step:  AIC=1746.31
-## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + tGravityAcc.mean...Y + 
-##     tGravityAcc.arCoeff...Y.1 + tBodyAcc.correlation...X.Y + 
-##     tGravityAcc.arCoeff...X.1 + fBodyAccMag.energy..
-## 
-##                                   Df    AIC
-## + tGravityAcc.arCoeff...Z.1        5 1682.3
-## + tGravityAcc.arCoeff...Z.2        5 1683.9
-## + tGravityAcc.energy...Y           5 1683.9
-## + tGravityAcc.arCoeff...Z.4        5 1684.1
-## + tGravityAcc.arCoeff...Z.3        5 1684.1
-## + tGravityAcc.entropy...Y          5 1684.5
-## + tGravityAcc.energy...Z           5 1698.0
-## + tBodyAccJerkMag.energy..         5 1700.9
-## + tBodyAccJerkMag.entropy..        5 1703.0
-## + fBodyAccMag.std..                5 1705.3
-## + tBodyAccJerk.entropy...X         5 1710.2
-## + tBodyAccJerkMag.mean..           5 1716.2
-## + tGravityAccMag.std..             5 1718.4
-## + tBodyAccMag.std..                5 1718.4
-## + tGravityAcc.arCoeff...Y.3        5 1723.3
-## + tGravityAcc.arCoeff...Y.2        5 1723.7
-## + tGravityAcc.max...Y              5 1725.4
-## + fBodyGyro.maxInds.Z              5 1733.7
-## + angle.X.gravityMean.             5 1735.1
-## + tBodyAccMag.mad..                5 1737.4
-## + tGravityAccMag.mad..             5 1737.4
-## + angle.Y.gravityMean.             5 1738.1
-## + fBodyAccJerk.std...X             5 1739.4
-## + fBodyAccJerk.bandsEnergy...1.8   5 1739.8
-## + tGravityAcc.energy...X           5 1740.0
-## + tBodyAcc.std...X                 5 1740.5
-## + tGravityAcc.min...Z              5 1740.7
-## + fBodyAccJerk.bandsEnergy...1.16  5 1740.8
-## + angle.Z.gravityMean.             5 1740.8
-## + tGravityAcc.min...Y              5 1741.2
-## + tGravityAcc.mean...Z             5 1741.8
-## + tGravityAcc.max...Z              5 1741.8
-## + fBodyAcc.bandsEnergy...1.16      5 1743.2
-## + fBodyAccMag.mad..                5 1743.5
-## + tBodyAccJerk.mad...X             5 1744.1
-## + fBodyAcc.bandsEnergy...1.24      5 1744.2
-## + tGravityAcc.mean...X             5 1744.2
-## + fBodyAcc.mean...X                5 1745.0
-## + fBodyAcc.mad...X                 5 1745.1
-## + tGravityAcc.max...X              5 1745.4
-## + tBodyAcc.energy...X              5 1745.5
-## + fBodyAcc.energy...X              5 1745.8
-## &lt;none&gt;                               1746.3
-## + tBodyAccJerk.iqr...Y             5 1748.9
-## 
-## Step:  AIC=1682.27
-## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + tGravityAcc.mean...Y + 
-##     tGravityAcc.arCoeff...Y.1 + tBodyAcc.correlation...X.Y + 
-##     tGravityAcc.arCoeff...X.1 + fBodyAccMag.energy.. + tGravityAcc.arCoeff...Z.1
+## Step:  AIC=2251.32
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2
 ## 
 ##                                   Df    AIC
-## + tGravityAcc.energy...Y           5 1615.2
-## + tGravityAcc.entropy...Y          5 1624.0
-## + tGravityAcc.arCoeff...Z.3        5 1629.6
-## + tGravityAcc.arCoeff...Z.2        5 1629.9
-## + tGravityAcc.arCoeff...Z.4        5 1630.2
-## + tGravityAcc.energy...Z           5 1635.9
-## + tBodyAccJerk.entropy...X         5 1652.7
-## + tBodyAccJerkMag.entropy..        5 1657.3
-## + tGravityAcc.arCoeff...Y.2        5 1657.5
-## + tGravityAcc.arCoeff...Y.3        5 1658.2
-## + tBodyAccJerkMag.energy..         5 1658.9
-## + fBodyAccMag.std..                5 1661.2
-## + tGravityAccMag.std..             5 1667.9
-## + tBodyAccMag.std..                5 1667.9
-## + tGravityAcc.max...Y              5 1668.0
-## + angle.X.gravityMean.             5 1669.7
-## + tBodyAccJerkMag.mean..           5 1669.7
-## + angle.Y.gravityMean.             5 1671.2
-## + tBodyAcc.std...X                 5 1673.3
-## + fBodyAcc.bandsEnergy...1.16      5 1674.9
-## + fBodyGyro.maxInds.Z              5 1675.6
-## + fBodyAcc.bandsEnergy...1.24      5 1677.2
-## + tGravityAcc.min...Y              5 1677.6
-## + angle.Z.gravityMean.             5 1678.3
-## + tGravityAcc.energy...X           5 1678.5
-## + tBodyAcc.energy...X              5 1679.0
-## + fBodyAcc.energy...X              5 1679.2
-## + tBodyAccMag.mad..                5 1679.5
-## + tGravityAccMag.mad..             5 1679.5
-## + tGravityAcc.max...Z              5 1681.0
-## + fBodyAccJerk.bandsEnergy...1.16  5 1681.8
-## &lt;none&gt;                               1682.3
-## + tGravityAcc.mean...Z             5 1682.7
-## + fBodyAcc.mad...X                 5 1682.8
-## + fBodyAccJerk.std...X             5 1683.4
-## + fBodyAccJerk.bandsEnergy...1.8   5 1683.5
-## + fBodyAcc.mean...X                5 1683.9
-## + tGravityAcc.mean...X             5 1684.2
-## + tGravityAcc.min...Z              5 1685.0
-## + tGravityAcc.max...X              5 1685.4
-## + fBodyAccMag.mad..                5 1686.7
-## + tBodyAccJerk.mad...X             5 1687.5
-## + tBodyAccJerk.iqr...Y             5 1688.8
+## + fBodyAccMag.energy..             5 2022.1
+## + tBodyAccMag.std..                5 2036.1
+## + tGravityAccMag.std..             5 2036.1
+## + fBodyAccMag.mad..                5 2053.1
+## + fBodyAccMag.std..                5 2058.6
+## + fBodyAccMag.sma..                5 2089.7
+## + tBodyAccMag.mad..                5 2103.2
+## + tGravityAccMag.mad..             5 2103.2
+## + tGravityAcc.arCoeff...Z.1        5 2142.7
+## + tGravityAcc.arCoeff...Z.2        5 2146.5
+## + tGravityAcc.arCoeff...Z.3        5 2152.9
+## + tGravityAcc.entropy...Y          5 2161.5
+## + tGravityAcc.arCoeff...X.2        5 2164.9
+## + tGravityAcc.energy...Z           5 2173.8
+## + tGravityAcc.energy...Y           5 2183.6
+## + fBodyGyro.maxInds.Z              5 2193.2
+## + fBodyAcc.energy...X              5 2206.7
+## + fBodyAcc.mad...X                 5 2209.0
+## + fBodyAcc.bandsEnergy...1.16      5 2209.9
+## + tGravityAcc.mean...Y             5 2211.5
+## + tBodyAccJerkMag.energy..         5 2219.9
+## + tBodyAccJerkMag.entropy..        5 2223.9
+## + tBodyAccJerk.sma..               5 2229.1
+## + tGravityAcc.max...Y              5 2229.8
+## + fBodyAccJerk.bandsEnergy...1.8   5 2231.2
+## + fBodyAccJerk.bandsEnergy...1.16  5 2243.1
+## + tBodyAccJerk.energy...X          5 2245.6
+## + fBodyAccJerk.iqr...X             5 2246.1
+## + fBodyAccJerk.bandsEnergy...1.24  5 2247.2
+## &lt;none&gt;                               2251.3
+## + tGravityAcc.min...Y              5 2252.2
+## + tGravityAcc.max...Z              5 2252.6
+## + tGravityAcc.min...Z              5 2253.2
+## + tBodyAccJerk.std...X             5 2253.4
+## + angle.Z.gravityMean.             5 2253.6
+## + tBodyAccJerk.mad...X             5 2253.6
+## + fBodyAccJerk.max...X             5 2254.0
+## + tGravityAcc.energy...X           5 2254.9
+## + fBodyAccJerk.std...X             5 2255.3
+## + tGravityAcc.max...X              5 2255.6
+## + fBodyAccJerk.mad...X             5 2256.3
+## + tGravityAcc.mean...X             5 2257.3
+## + tGravityAcc.mean...Z             5 2259.2
+## + fBodyAccJerk.entropy...X         5 2259.7
+## + angle.X.gravityMean.             5 2260.2
+## + tGravityAcc.arCoeff...Y.1        5 2262.2
 ## 
-## Step:  AIC=1615.16
-## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + tGravityAcc.mean...Y + 
-##     tGravityAcc.arCoeff...Y.1 + tBodyAcc.correlation...X.Y + 
-##     tGravityAcc.arCoeff...X.1 + fBodyAccMag.energy.. + tGravityAcc.arCoeff...Z.1 + 
-##     tGravityAcc.energy...Y
-## 
-##                                   Df    AIC
-## + tGravityAcc.arCoeff...Z.2        5 1564.7
-## + tGravityAcc.arCoeff...Z.3        5 1565.3
-## + tGravityAcc.arCoeff...Z.4        5 1566.3
-## + tBodyAccJerk.entropy...X         5 1585.8
-## + tBodyAccJerkMag.entropy..        5 1589.8
-## + fBodyAccMag.std..                5 1598.1
-## + tBodyAccJerkMag.energy..         5 1599.9
-## + tGravityAcc.max...Y              5 1601.5
-## + tBodyAcc.std...X                 5 1603.7
-## + tBodyAccJerkMag.mean..           5 1604.3
-## + tGravityAcc.arCoeff...Y.3        5 1605.7
-## + fBodyGyro.maxInds.Z              5 1605.8
-## + tGravityAcc.arCoeff...Y.2        5 1606.3
-## + tGravityAccMag.std..             5 1606.5
-## + tBodyAccMag.std..                5 1606.5
-## + tGravityAcc.min...Y              5 1607.6
-## + fBodyAcc.bandsEnergy...1.16      5 1610.5
-## + tBodyAcc.energy...X              5 1611.8
-## + fBodyAcc.bandsEnergy...1.24      5 1612.9
-## + tBodyAccMag.mad..                5 1613.0
-## + tGravityAccMag.mad..             5 1613.0
-## + angle.Z.gravityMean.             5 1613.5
-## + tGravityAcc.max...Z              5 1613.8
-## + tGravityAcc.mean...Z             5 1614.6
-## + fBodyAcc.energy...X              5 1615.0
-## &lt;none&gt;                               1615.2
-## + angle.X.gravityMean.             5 1615.4
-## + tGravityAcc.energy...X           5 1615.5
-## + fBodyAccJerk.std...X             5 1615.6
-## + tGravityAcc.energy...Z           5 1616.1
-## + fBodyAcc.mad...X                 5 1617.4
-## + tGravityAcc.mean...X             5 1617.5
-## + fBodyAccJerk.bandsEnergy...1.8   5 1617.6
-## + tGravityAcc.min...Z              5 1617.8
-## + fBodyAccJerk.bandsEnergy...1.16  5 1617.9
-## + fBodyAccMag.mad..                5 1618.0
-## + tGravityAcc.max...X              5 1618.3
-## + tGravityAcc.entropy...Y          5 1619.6
-## + fBodyAcc.mean...X                5 1619.6
-## + tBodyAccJerk.mad...X             5 1619.6
-## + angle.Y.gravityMean.             5 1620.1
-## + tBodyAccJerk.iqr...Y             5 1621.7
-## 
-## Step:  AIC=1564.73
-## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + tGravityAcc.mean...Y + 
-##     tGravityAcc.arCoeff...Y.1 + tBodyAcc.correlation...X.Y + 
-##     tGravityAcc.arCoeff...X.1 + fBodyAccMag.energy.. + tGravityAcc.arCoeff...Z.1 + 
-##     tGravityAcc.energy...Y + tGravityAcc.arCoeff...Z.2
+## Step:  AIC=2022.1
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy..
 ## 
 ##                                   Df    AIC
-## + tBodyAccJerk.entropy...X         5 1534.2
-## + fBodyAccMag.std..                5 1550.4
-## + tGravityAcc.max...Y              5 1550.9
-## + tBodyAcc.std...X                 5 1552.0
-## + tBodyAccJerkMag.entropy..        5 1555.3
-## + tBodyAccMag.mad..                5 1557.0
-## + tGravityAccMag.mad..             5 1557.0
-## + tGravityAcc.arCoeff...Y.3        5 1559.1
-## + tGravityAcc.arCoeff...Y.2        5 1559.4
-## + tGravityAcc.min...Y              5 1559.4
-## + fBodyGyro.maxInds.Z              5 1561.3
-## + fBodyAcc.bandsEnergy...1.16      5 1561.8
-## + tBodyAccJerkMag.energy..         5 1562.1
-## + fBodyAcc.bandsEnergy...1.24      5 1562.2
-## + tBodyAcc.energy...X              5 1563.1
-## + fBodyAcc.energy...X              5 1563.7
-## &lt;none&gt;                               1564.7
-## + fBodyAccJerk.bandsEnergy...1.8   5 1565.2
-## + tBodyAccJerkMag.mean..           5 1565.2
-## + angle.X.gravityMean.             5 1566.7
-## + tGravityAccMag.std..             5 1567.8
-## + tBodyAccMag.std..                5 1567.8
-## + fBodyAcc.mad...X                 5 1568.9
-## + fBodyAccMag.mad..                5 1569.2
-## + fBodyAccJerk.bandsEnergy...1.16  5 1569.8
-## + tGravityAcc.max...X              5 1569.8
-## + tGravityAcc.energy...X           5 1569.8
-## + tGravityAcc.max...Z              5 1569.9
-## + tGravityAcc.energy...Z           5 1569.9
-## + angle.Z.gravityMean.             5 1570.4
-## + fBodyAccJerk.std...X             5 1570.8
-## + fBodyAcc.mean...X                5 1570.8
-## + tGravityAcc.mean...Z             5 1570.8
-## + tBodyAccJerk.mad...X             5 1570.9
-## + tBodyAccJerk.iqr...Y             5 1571.3
-## + tGravityAcc.min...Z              5 1571.8
-## + tGravityAcc.entropy...Y          5 1572.4
-## + tGravityAcc.mean...X             5 1572.6
-## + angle.Y.gravityMean.             5 1573.0
-## + tGravityAcc.arCoeff...Z.3        5 1575.3
-## + tGravityAcc.arCoeff...Z.4        5 1575.7
+## + tGravityAcc.arCoeff...X.2        5 1907.8
+## + tGravityAcc.entropy...Y          5 1925.9
+## + tBodyAccJerkMag.entropy..        5 1928.1
+## + tBodyAccJerk.sma..               5 1933.2
+## + tBodyAccJerkMag.energy..         5 1940.3
+## + tGravityAcc.arCoeff...Z.1        5 1940.8
+## + tGravityAcc.arCoeff...Z.3        5 1941.6
+## + tGravityAcc.arCoeff...Z.2        5 1943.0
+## + fBodyAccJerk.bandsEnergy...1.16  5 1948.7
+## + tGravityAcc.energy...Y           5 1956.8
+## + tGravityAcc.energy...Z           5 1960.6
+## + fBodyAccMag.std..                5 1974.6
+## + fBodyAccJerk.std...X             5 1975.1
+## + fBodyGyro.maxInds.Z              5 1979.8
+## + tBodyAccMag.std..                5 1980.3
+## + tGravityAccMag.std..             5 1980.3
+## + tGravityAcc.min...Y              5 1984.0
+## + tGravityAcc.max...Y              5 1986.4
+## + fBodyAccJerk.mad...X             5 1990.2
+## + tBodyAccJerk.std...X             5 1990.9
+## + tBodyAccJerk.mad...X             5 1993.4
+## + fBodyAccJerk.bandsEnergy...1.24  5 1996.6
+## + fBodyAccJerk.max...X             5 1998.6
+## + fBodyAccJerk.bandsEnergy...1.8   5 1999.4
+## + tGravityAcc.max...Z              5 2000.8
+## + tGravityAcc.mean...Z             5 2002.5
+## + angle.Z.gravityMean.             5 2002.6
+## + tBodyAccJerk.energy...X          5 2003.2
+## + tGravityAcc.min...Z              5 2003.3
+## + tGravityAcc.energy...X           5 2003.8
+## + tGravityAcc.max...X              5 2007.1
+## + tGravityAcc.mean...X             5 2007.2
+## + fBodyAccJerk.entropy...X         5 2008.8
+## + fBodyAccMag.sma..                5 2009.8
+## + tBodyAccMag.mad..                5 2013.6
+## + tGravityAccMag.mad..             5 2013.6
+## + tGravityAcc.mean...Y             5 2016.3
+## + fBodyAccJerk.iqr...X             5 2017.1
+## + angle.X.gravityMean.             5 2019.0
+## + fBodyAccMag.mad..                5 2019.2
+## + fBodyAcc.mad...X                 5 2020.4
+## &lt;none&gt;                               2022.1
+## + tGravityAcc.arCoeff...Y.1        5 2026.4
+## + fBodyAcc.energy...X              5 2032.6
+## + fBodyAcc.bandsEnergy...1.16      5 2034.8
 ## 
-## Step:  AIC=1534.16
-## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + tGravityAcc.mean...Y + 
-##     tGravityAcc.arCoeff...Y.1 + tBodyAcc.correlation...X.Y + 
-##     tGravityAcc.arCoeff...X.1 + fBodyAccMag.energy.. + tGravityAcc.arCoeff...Z.1 + 
-##     tGravityAcc.energy...Y + tGravityAcc.arCoeff...Z.2 + tBodyAccJerk.entropy...X
-## 
-##                                   Df    AIC
-## + tBodyAcc.std...X                 5 1505.6
-## + fBodyAcc.bandsEnergy...1.24      5 1516.7
-## + fBodyAcc.energy...X              5 1517.2
-## + tBodyAcc.energy...X              5 1517.2
-## + fBodyAcc.bandsEnergy...1.16      5 1518.7
-## + fBodyAccMag.std..                5 1521.0
-## + tBodyAccJerkMag.energy..         5 1522.6
-## + tGravityAcc.max...Y              5 1523.6
-## + tGravityAcc.min...Y              5 1527.3
-## + tBodyAccJerk.mad...X             5 1528.7
-## + fBodyGyro.maxInds.Z              5 1528.8
-## + tBodyAccJerkMag.mean..           5 1529.3
-## + tGravityAcc.arCoeff...Y.2        5 1531.6
-## + fBodyAccJerk.bandsEnergy...1.8   5 1531.9
-## + tGravityAcc.arCoeff...Y.3        5 1531.9
-## + fBodyAcc.mean...X                5 1532.1
-## &lt;none&gt;                               1534.2
-## + fBodyAcc.mad...X                 5 1535.0
-## + tGravityAccMag.std..             5 1535.5
-## + tBodyAccMag.std..                5 1535.5
-## + angle.X.gravityMean.             5 1537.2
-## + tGravityAcc.max...Z              5 1538.3
-## + tBodyAccJerk.iqr...Y             5 1538.4
-## + angle.Z.gravityMean.             5 1538.5
-## + fBodyAccMag.mad..                5 1538.6
-## + tBodyAccMag.mad..                5 1538.6
-## + tGravityAccMag.mad..             5 1538.6
-## + fBodyAccJerk.std...X             5 1538.8
-## + tGravityAcc.energy...Z           5 1539.0
-## + tGravityAcc.mean...Z             5 1539.2
-## + fBodyAccJerk.bandsEnergy...1.16  5 1540.6
-## + tGravityAcc.min...Z              5 1540.8
-## + tBodyAccJerkMag.entropy..        5 1541.3
-## + tGravityAcc.energy...X           5 1542.1
-## + tGravityAcc.max...X              5 1542.3
-## + tGravityAcc.mean...X             5 1542.8
-## + angle.Y.gravityMean.             5 1543.3
-## + tGravityAcc.arCoeff...Z.3        5 1544.4
-## + tGravityAcc.arCoeff...Z.4        5 1544.8
-## + tGravityAcc.entropy...Y          5 1550.2
-## 
-## Step:  AIC=1505.57
-## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + tGravityAcc.mean...Y + 
-##     tGravityAcc.arCoeff...Y.1 + tBodyAcc.correlation...X.Y + 
-##     tGravityAcc.arCoeff...X.1 + fBodyAccMag.energy.. + tGravityAcc.arCoeff...Z.1 + 
-##     tGravityAcc.energy...Y + tGravityAcc.arCoeff...Z.2 + tBodyAccJerk.entropy...X + 
-##     tBodyAcc.std...X
+## Step:  AIC=1907.76
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy.. + 
+##     tGravityAcc.arCoeff...X.2
 ## 
 ##                                   Df    AIC
-## + fBodyAccJerk.bandsEnergy...1.8   5 1445.6
-## + fBodyAccJerk.bandsEnergy...1.16  5 1455.0
-## + tBodyAccJerkMag.energy..         5 1472.0
-## + tBodyAccJerk.mad...X             5 1476.7
-## + tBodyAccJerkMag.mean..           5 1477.8
-## + tBodyAccJerkMag.entropy..        5 1482.5
-## + fBodyAccJerk.std...X             5 1486.7
-## + fBodyAccMag.std..                5 1487.0
-## + tBodyAccMag.mad..                5 1490.5
-## + tGravityAccMag.mad..             5 1490.5
-## + fBodyGyro.maxInds.Z              5 1496.7
-## + fBodyAcc.mean...X                5 1499.0
-## + tBodyAcc.energy...X              5 1500.1
-## + fBodyAcc.energy...X              5 1500.3
-## + tGravityAcc.min...Y              5 1500.4
-## + tGravityAccMag.std..             5 1504.1
-## + tBodyAccMag.std..                5 1504.1
-## + tGravityAcc.max...Y              5 1504.4
-## + tGravityAcc.arCoeff...Y.2        5 1504.6
-## + tGravityAcc.arCoeff...Y.3        5 1504.6
-## &lt;none&gt;                               1505.6
-## + tBodyAccJerk.iqr...Y             5 1507.7
-## + angle.X.gravityMean.             5 1508.0
-## + tGravityAcc.max...Z              5 1508.2
-## + tGravityAcc.energy...Z           5 1508.4
-## + fBodyAcc.bandsEnergy...1.24      5 1508.8
-## + tGravityAcc.mean...Z             5 1509.1
-## + angle.Z.gravityMean.             5 1509.3
-## + fBodyAcc.bandsEnergy...1.16      5 1509.5
-## + fBodyAcc.mad...X                 5 1509.5
-## + fBodyAccMag.mad..                5 1510.8
-## + tGravityAcc.min...Z              5 1510.9
-## + tGravityAcc.max...X              5 1512.2
-## + tGravityAcc.mean...X             5 1513.5
-## + tGravityAcc.energy...X           5 1515.3
-## + tGravityAcc.arCoeff...Z.3        5 1516.3
-## + tGravityAcc.arCoeff...Z.4        5 1518.4
-## + angle.Y.gravityMean.             5 1518.9
-## + tGravityAcc.entropy...Y          5 1524.3
+## + tGravityAcc.entropy...Y          5 1803.0
+## + tGravityAcc.arCoeff...Z.2        5 1821.3
+## + tGravityAcc.arCoeff...Z.3        5 1822.2
+## + tGravityAcc.arCoeff...Z.1        5 1823.2
+## + tGravityAcc.energy...Y           5 1841.8
+## + tGravityAcc.energy...Z           5 1860.6
+## + tBodyAccMag.std..                5 1866.3
+## + tGravityAccMag.std..             5 1866.3
+## + fBodyAccMag.std..                5 1868.9
+## + tBodyAccJerkMag.entropy..        5 1873.2
+## + tGravityAcc.max...Y              5 1876.4
+## + tGravityAcc.min...Y              5 1878.5
+## + fBodyGyro.maxInds.Z              5 1881.1
+## + tBodyAccJerk.sma..               5 1883.7
+## + fBodyAcc.mad...X                 5 1886.6
+## + tBodyAccJerkMag.energy..         5 1887.3
+## + fBodyAccJerk.bandsEnergy...1.16  5 1889.6
+## + angle.Z.gravityMean.             5 1889.8
+## + tGravityAcc.mean...Z             5 1890.3
+## + fBodyAcc.bandsEnergy...1.16      5 1890.8
+## + tGravityAcc.mean...X             5 1890.9
+## + tGravityAcc.min...Z              5 1891.2
+## + tGravityAcc.energy...X           5 1891.6
+## + tGravityAcc.max...Z              5 1891.8
+## + fBodyAcc.energy...X              5 1892.1
+## + fBodyAccJerk.max...X             5 1893.5
+## + fBodyAccJerk.std...X             5 1893.7
+## + tGravityAcc.max...X              5 1893.9
+## + tBodyAccMag.mad..                5 1895.1
+## + tGravityAccMag.mad..             5 1895.1
+## + angle.X.gravityMean.             5 1897.7
+## + fBodyAccMag.sma..                5 1898.4
+## + tGravityAcc.mean...Y             5 1901.2
+## + fBodyAccJerk.mad...X             5 1901.3
+## + fBodyAccMag.mad..                5 1902.7
+## + tBodyAccJerk.mad...X             5 1902.7
+## + fBodyAccJerk.iqr...X             5 1902.9
+## + fBodyAccJerk.entropy...X         5 1904.9
+## + tBodyAccJerk.std...X             5 1905.0
+## + fBodyAccJerk.bandsEnergy...1.8   5 1906.2
+## + fBodyAccJerk.bandsEnergy...1.24  5 1907.2
+## &lt;none&gt;                               1907.8
+## + tBodyAccJerk.energy...X          5 1910.6
+## + tGravityAcc.arCoeff...Y.1        5 1913.4
 ## 
-## Step:  AIC=1445.56
-## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + tGravityAcc.mean...Y + 
-##     tGravityAcc.arCoeff...Y.1 + tBodyAcc.correlation...X.Y + 
-##     tGravityAcc.arCoeff...X.1 + fBodyAccMag.energy.. + tGravityAcc.arCoeff...Z.1 + 
-##     tGravityAcc.energy...Y + tGravityAcc.arCoeff...Z.2 + tBodyAccJerk.entropy...X + 
-##     tBodyAcc.std...X + fBodyAccJerk.bandsEnergy...1.8
-## 
-##                                   Df    AIC
-## + tBodyAccJerkMag.entropy..        5 1424.1
-## + tBodyAccJerkMag.energy..         5 1427.6
-## + tBodyAccJerk.mad...X             5 1428.1
-## + tBodyAccJerkMag.mean..           5 1428.5
-## + fBodyAccJerk.bandsEnergy...1.16  5 1435.5
-## + fBodyAccMag.std..                5 1436.2
-## + tBodyAccMag.mad..                5 1437.8
-## + tGravityAccMag.mad..             5 1437.8
-## + tGravityAcc.max...Y              5 1438.8
-## + tGravityAcc.min...Y              5 1440.0
-## + fBodyAcc.mean...X                5 1441.1
-## + fBodyAccJerk.std...X             5 1442.6
-## + fBodyGyro.maxInds.Z              5 1442.9
-## + angle.X.gravityMean.             5 1445.4
-## &lt;none&gt;                               1445.6
-## + tBodyAccJerk.iqr...Y             5 1446.6
-## + tGravityAccMag.std..             5 1447.5
-## + tBodyAccMag.std..                5 1447.5
-## + tGravityAcc.arCoeff...Y.2        5 1447.7
-## + tGravityAcc.max...Z              5 1447.9
-## + fBodyAcc.mad...X                 5 1448.3
-## + angle.Z.gravityMean.             5 1448.7
-## + tGravityAcc.mean...Z             5 1449.0
-## + tGravityAcc.arCoeff...Y.3        5 1450.5
-## + tGravityAcc.min...Z              5 1451.2
-## + tBodyAcc.energy...X              5 1451.3
-## + fBodyAcc.energy...X              5 1451.3
-## + fBodyAcc.bandsEnergy...1.16      5 1451.5
-## + tGravityAcc.max...X              5 1451.5
-## + fBodyAcc.bandsEnergy...1.24      5 1454.1
-## + fBodyAccMag.mad..                5 1454.8
-## + tGravityAcc.energy...X           5 1455.0
-## + angle.Y.gravityMean.             5 1455.5
-## + tGravityAcc.mean...X             5 1457.2
-## + tGravityAcc.arCoeff...Z.3        5 1457.4
-## + tGravityAcc.arCoeff...Z.4        5 1458.4
-## + tGravityAcc.entropy...Y          5 1459.7
-## + tGravityAcc.energy...Z           5 1465.3
-## 
-## Step:  AIC=1424.12
-## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + tGravityAcc.mean...Y + 
-##     tGravityAcc.arCoeff...Y.1 + tBodyAcc.correlation...X.Y + 
-##     tGravityAcc.arCoeff...X.1 + fBodyAccMag.energy.. + tGravityAcc.arCoeff...Z.1 + 
-##     tGravityAcc.energy...Y + tGravityAcc.arCoeff...Z.2 + tBodyAccJerk.entropy...X + 
-##     tBodyAcc.std...X + fBodyAccJerk.bandsEnergy...1.8 + tBodyAccJerkMag.entropy..
+## Step:  AIC=1803.02
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy.. + 
+##     tGravityAcc.arCoeff...X.2 + tGravityAcc.entropy...Y
 ## 
 ##                                   Df    AIC
-## + tGravityAcc.max...Y              5 1419.4
-## + tGravityAcc.arCoeff...Y.2        5 1421.3
-## + fBodyAccJerk.bandsEnergy...1.16  5 1422.2
-## + angle.Z.gravityMean.             5 1423.8
-## &lt;none&gt;                               1424.1
-## + fBodyGyro.maxInds.Z              5 1424.1
-## + tGravityAcc.mean...Z             5 1424.3
-## + tGravityAcc.arCoeff...Y.3        5 1424.3
-## + tGravityAcc.max...Z              5 1424.5
-## + tGravityAcc.min...Z              5 1425.9
-## + tGravityAcc.entropy...Y          5 1426.1
-## + tGravityAcc.min...Y              5 1426.5
-## + tGravityAcc.energy...Z           5 1426.6
-## + tGravityAcc.max...X              5 1428.9
-## + angle.X.gravityMean.             5 1428.9
-## + tBodyAccJerkMag.energy..         5 1430.0
-## + tBodyAccMag.mad..                5 1431.5
-## + tGravityAccMag.mad..             5 1431.5
-## + fBodyAccMag.std..                5 1431.8
-## + tBodyAccJerk.mad...X             5 1432.0
-## + angle.Y.gravityMean.             5 1432.7
-## + tGravityAcc.mean...X             5 1433.2
-## + tGravityAcc.energy...X           5 1433.3
-## + tGravityAcc.arCoeff...Z.3        5 1433.7
-## + tGravityAcc.arCoeff...Z.4        5 1433.9
-## + tGravityAccMag.std..             5 1438.6
-## + tBodyAccMag.std..                5 1438.6
-## + fBodyAcc.mad...X                 5 1441.3
-## + fBodyAccJerk.std...X             5 1441.9
-## + fBodyAccMag.mad..                5 1441.9
-## + fBodyAcc.mean...X                5 1444.7
-## + tBodyAccJerkMag.mean..           5 1445.1
-## + tBodyAcc.energy...X              5 1448.5
-## + fBodyAcc.energy...X              5 1448.5
-## + fBodyAcc.bandsEnergy...1.16      5 1451.2
-## + fBodyAcc.bandsEnergy...1.24      5 1452.4
-## + tBodyAccJerk.iqr...Y             5 1452.6
+## + tGravityAcc.arCoeff...Z.3        5 1710.4
+## + tGravityAcc.arCoeff...Z.2        5 1713.8
+## + tGravityAcc.arCoeff...Z.1        5 1718.8
+## + tBodyAccJerkMag.entropy..        5 1766.7
+## + fBodyAccMag.std..                5 1769.4
+## + tGravityAcc.max...Y              5 1770.6
+## + tGravityAcc.min...Y              5 1771.1
+## + fBodyGyro.maxInds.Z              5 1776.4
+## + tBodyAccJerk.sma..               5 1779.6
+## + tBodyAccMag.std..                5 1779.7
+## + tGravityAccMag.std..             5 1779.7
+## + tBodyAccJerkMag.energy..         5 1784.0
+## + fBodyAcc.mad...X                 5 1787.9
+## + fBodyAccJerk.bandsEnergy...1.16  5 1788.4
+## + fBodyAcc.energy...X              5 1790.6
+## + angle.Z.gravityMean.             5 1793.6
+## + fBodyAcc.bandsEnergy...1.16      5 1793.9
+## + tGravityAcc.mean...X             5 1794.0
+## + tGravityAcc.energy...X           5 1794.4
+## + tGravityAcc.min...Z              5 1794.6
+## + tBodyAccMag.mad..                5 1795.7
+## + tGravityAccMag.mad..             5 1795.7
+## + tGravityAcc.max...X              5 1796.2
+## + fBodyAccJerk.bandsEnergy...1.8   5 1796.4
+## + fBodyAccJerk.std...X             5 1797.1
+## + fBodyAccMag.sma..                5 1797.2
+## + tGravityAcc.mean...Y             5 1798.0
+## + fBodyAccJerk.max...X             5 1798.2
+## + tGravityAcc.mean...Z             5 1800.3
+## + tGravityAcc.max...Z              5 1800.6
+## + tGravityAcc.arCoeff...Y.1        5 1801.7
+## + tGravityAcc.energy...Z           5 1802.1
+## + tGravityAcc.energy...Y           5 1802.6
+## + fBodyAccJerk.mad...X             5 1802.7
+## + fBodyAccJerk.iqr...X             5 1802.8
+## &lt;none&gt;                               1803.0
+## + fBodyAccMag.mad..                5 1803.3
+## + tBodyAccJerk.mad...X             5 1805.1
+## + fBodyAccJerk.entropy...X         5 1805.9
+## + angle.X.gravityMean.             5 1806.7
+## + tBodyAccJerk.std...X             5 1807.2
+## + tBodyAccJerk.energy...X          5 1807.4
+## + fBodyAccJerk.bandsEnergy...1.24  5 1808.7
 ## 
-## Step:  AIC=1419.4
-## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + tGravityAcc.mean...Y + 
-##     tGravityAcc.arCoeff...Y.1 + tBodyAcc.correlation...X.Y + 
-##     tGravityAcc.arCoeff...X.1 + fBodyAccMag.energy.. + tGravityAcc.arCoeff...Z.1 + 
-##     tGravityAcc.energy...Y + tGravityAcc.arCoeff...Z.2 + tBodyAccJerk.entropy...X + 
-##     tBodyAcc.std...X + fBodyAccJerk.bandsEnergy...1.8 + tBodyAccJerkMag.entropy.. + 
+## Step:  AIC=1710.43
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy.. + 
+##     tGravityAcc.arCoeff...X.2 + tGravityAcc.entropy...Y + tGravityAcc.arCoeff...Z.3
+## 
+##                                   Df    AIC
+## + tGravityAcc.max...Y              5 1676.9
+## + tGravityAcc.min...Y              5 1680.8
+## + tBodyAccJerkMag.entropy..        5 1683.0
+## + tBodyAccJerk.sma..               5 1694.9
+## + fBodyAccJerk.bandsEnergy...1.16  5 1695.4
+## + fBodyAcc.mad...X                 5 1699.4
+## + fBodyGyro.maxInds.Z              5 1700.2
+## + fBodyAcc.energy...X              5 1700.6
+## + fBodyAccMag.std..                5 1701.7
+## + tBodyAccMag.std..                5 1701.7
+## + tGravityAccMag.std..             5 1701.7
+## + fBodyAcc.bandsEnergy...1.16      5 1702.3
+## + tBodyAccJerkMag.energy..         5 1705.4
+## + tGravityAcc.mean...Y             5 1706.2
+## + tGravityAcc.max...Z              5 1706.2
+## + tGravityAcc.arCoeff...Z.1        5 1706.2
+## + angle.Z.gravityMean.             5 1706.6
+## + tGravityAcc.energy...X           5 1707.5
+## + tGravityAcc.arCoeff...Z.2        5 1708.3
+## + tGravityAcc.mean...Z             5 1708.4
+## + tGravityAcc.mean...X             5 1709.1
+## + tBodyAccMag.mad..                5 1709.3
+## + tGravityAccMag.mad..             5 1709.3
+## + fBodyAccJerk.max...X             5 1709.6
+## + tGravityAcc.min...Z              5 1710.3
+## &lt;none&gt;                               1710.4
+## + fBodyAccJerk.bandsEnergy...1.8   5 1711.1
+## + tGravityAcc.max...X              5 1711.2
+## + fBodyAccJerk.std...X             5 1711.3
+## + fBodyAccJerk.iqr...X             5 1711.8
+## + fBodyAccMag.sma..                5 1714.0
+## + tGravityAcc.arCoeff...Y.1        5 1714.3
+## + angle.X.gravityMean.             5 1715.2
+## + fBodyAccMag.mad..                5 1716.0
+## + fBodyAccJerk.mad...X             5 1716.0
+## + tGravityAcc.energy...Y           5 1716.6
+## + fBodyAccJerk.entropy...X         5 1717.6
+## + tBodyAccJerk.mad...X             5 1718.0
+## + tBodyAccJerk.std...X             5 1719.0
+## + fBodyAccJerk.bandsEnergy...1.24  5 1719.2
+## + tGravityAcc.energy...Z           5 1719.4
+## + tBodyAccJerk.energy...X          5 1719.4
+## 
+## Step:  AIC=1676.92
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy.. + 
+##     tGravityAcc.arCoeff...X.2 + tGravityAcc.entropy...Y + tGravityAcc.arCoeff...Z.3 + 
 ##     tGravityAcc.max...Y
 ## 
 ##                                   Df    AIC
-## + fBodyAccMag.std..                5 1399.3
-## + fBodyAccJerk.bandsEnergy...1.16  5 1411.9
-## + tBodyAccJerkMag.energy..         5 1413.4
-## + tGravityAcc.arCoeff...Y.3        5 1414.0
-## + tGravityAcc.arCoeff...Y.2        5 1414.2
-## + tGravityAcc.energy...Z           5 1417.8
-## + fBodyGyro.maxInds.Z              5 1418.8
-## + tGravityAccMag.std..             5 1419.1
-## + tBodyAccMag.std..                5 1419.1
-## &lt;none&gt;                               1419.4
-## + angle.X.gravityMean.             5 1419.7
-## + angle.Z.gravityMean.             5 1421.2
-## + tBodyAccMag.mad..                5 1421.3
-## + tGravityAccMag.mad..             5 1421.3
-## + tGravityAcc.mean...Z             5 1421.9
-## + tGravityAcc.max...Z              5 1422.1
-## + tGravityAcc.min...Y              5 1422.5
-## + tGravityAcc.min...Z              5 1422.9
-## + tBodyAccJerk.mad...X             5 1423.6
-## + fBodyAccMag.mad..                5 1424.0
-## + tGravityAcc.max...X              5 1426.1
-## + tBodyAccJerkMag.mean..           5 1427.3
-## + angle.Y.gravityMean.             5 1428.6
-## + tGravityAcc.entropy...Y          5 1428.8
-## + tGravityAcc.energy...X           5 1430.0
-## + tGravityAcc.arCoeff...Z.4        5 1430.2
-## + fBodyAcc.mean...X                5 1430.8
-## + fBodyAcc.mad...X                 5 1433.9
-## + fBodyAccJerk.std...X             5 1434.5
-## + tGravityAcc.arCoeff...Z.3        5 1434.8
-## + fBodyAcc.bandsEnergy...1.16      5 1435.2
-## + tBodyAcc.energy...X              5 1436.3
-## + fBodyAcc.energy...X              5 1436.8
-## + fBodyAcc.bandsEnergy...1.24      5 1437.8
-## + tGravityAcc.mean...X             5 1440.8
-## + tBodyAccJerk.iqr...Y             5 1444.2
+## + fBodyAcc.mad...X                 5 1659.6
+## + tBodyAccJerkMag.entropy..        5 1661.3
+## + tGravityAcc.min...Y              5 1663.5
+## + fBodyAcc.bandsEnergy...1.16      5 1663.7
+## + fBodyAcc.energy...X              5 1665.1
+## + tGravityAcc.mean...Y             5 1667.4
+## + fBodyAccMag.std..                5 1667.7
+## + tBodyAccJerk.sma..               5 1669.6
+## + tGravityAcc.arCoeff...Z.2        5 1670.0
+## + tGravityAcc.arCoeff...Z.1        5 1670.7
+## + fBodyGyro.maxInds.Z              5 1671.7
+## + angle.Z.gravityMean.             5 1673.2
+## + tBodyAccMag.std..                5 1673.8
+## + tGravityAccMag.std..             5 1673.8
+## + fBodyAccJerk.iqr...X             5 1675.6
+## + fBodyAccJerk.bandsEnergy...1.16  5 1676.5
+## &lt;none&gt;                               1676.9
+## + fBodyAccJerk.max...X             5 1677.0
+## + tGravityAcc.max...Z              5 1677.8
+## + tBodyAccMag.mad..                5 1678.1
+## + tGravityAccMag.mad..             5 1678.1
+## + tGravityAcc.energy...Z           5 1679.1
+## + tGravityAcc.mean...Z             5 1679.2
+## + fBodyAccJerk.std...X             5 1679.2
+## + fBodyAccMag.sma..                5 1679.3
+## + tGravityAcc.mean...X             5 1680.0
+## + tBodyAccJerk.mad...X             5 1681.0
+## + tGravityAcc.energy...Y           5 1681.5
+## + tBodyAccJerkMag.energy..         5 1681.9
+## + tGravityAcc.min...Z              5 1682.5
+## + fBodyAccJerk.mad...X             5 1682.7
+## + tGravityAcc.max...X              5 1682.9
+## + tGravityAcc.arCoeff...Y.1        5 1683.0
+## + fBodyAccJerk.entropy...X         5 1683.0
+## + tBodyAccJerk.std...X             5 1683.2
+## + angle.X.gravityMean.             5 1683.6
+## + tGravityAcc.energy...X           5 1684.2
+## + fBodyAccMag.mad..                5 1684.7
+## + fBodyAccJerk.bandsEnergy...1.8   5 1684.8
+## + tBodyAccJerk.energy...X          5 1689.1
+## + fBodyAccJerk.bandsEnergy...1.24  5 1692.6
 ## 
-## Step:  AIC=1399.32
-## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + tGravityAcc.mean...Y + 
-##     tGravityAcc.arCoeff...Y.1 + tBodyAcc.correlation...X.Y + 
-##     tGravityAcc.arCoeff...X.1 + fBodyAccMag.energy.. + tGravityAcc.arCoeff...Z.1 + 
-##     tGravityAcc.energy...Y + tGravityAcc.arCoeff...Z.2 + tBodyAccJerk.entropy...X + 
-##     tBodyAcc.std...X + fBodyAccJerk.bandsEnergy...1.8 + tBodyAccJerkMag.entropy.. + 
-##     tGravityAcc.max...Y + fBodyAccMag.std..
+## Step:  AIC=1659.57
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy.. + 
+##     tGravityAcc.arCoeff...X.2 + tGravityAcc.entropy...Y + tGravityAcc.arCoeff...Z.3 + 
+##     tGravityAcc.max...Y + fBodyAcc.mad...X
 ## 
 ##                                   Df    AIC
-## &lt;none&gt;                               1399.3
-## + fBodyAccJerk.bandsEnergy...1.16  5 1402.0
-## + tGravityAcc.min...Y              5 1402.9
-## + angle.Z.gravityMean.             5 1403.6
-## + tGravityAcc.mean...Z             5 1403.9
-## + tBodyAccJerk.iqr...Y             5 1404.2
-## + tGravityAcc.min...Z              5 1404.4
-## + tGravityAcc.max...Z              5 1404.7
-## + angle.X.gravityMean.             5 1405.0
-## + tBodyAccJerkMag.mean..           5 1407.1
-## + tBodyAccJerkMag.energy..         5 1409.1
-## + angle.Y.gravityMean.             5 1409.3
-## + tBodyAccJerk.mad...X             5 1409.5
-## + tGravityAcc.energy...X           5 1410.3
-## + fBodyGyro.maxInds.Z              5 1411.0
-## + fBodyAccJerk.std...X             5 1411.2
-## + tBodyAccMag.mad..                5 1412.8
-## + tGravityAccMag.mad..             5 1412.8
-## + fBodyAcc.mad...X                 5 1414.3
-## + fBodyAcc.mean...X                5 1414.9
-## + fBodyAcc.energy...X              5 1415.6
-## + tBodyAcc.energy...X              5 1415.7
-## + fBodyAcc.bandsEnergy...1.16      5 1416.0
-## + fBodyAcc.bandsEnergy...1.24      5 1416.4
-## + tGravityAccMag.std..             5 1416.9
-## + tBodyAccMag.std..                5 1416.9
-## + fBodyAccMag.mad..                5 1417.0
-## + tGravityAcc.arCoeff...Z.3        5 1421.8
-## + tGravityAcc.arCoeff...Y.2        5 1422.0
-## + tGravityAcc.arCoeff...Z.4        5 1422.6
-## + tGravityAcc.max...X              5 1423.5
-## + tGravityAcc.entropy...Y          5 1428.0
-## + tGravityAcc.arCoeff...Y.3        5 1429.3
-## + tGravityAcc.energy...Z           5 1440.3
-## + tGravityAcc.mean...X             5 1450.4</code></pre>
+## + tBodyAccJerkMag.entropy..        5 1629.3
+## + fBodyAccJerk.bandsEnergy...1.16  5 1646.9
+## + tGravityAcc.min...Y              5 1647.5
+## + fBodyGyro.maxInds.Z              5 1647.7
+## + tGravityAcc.arCoeff...Z.1        5 1653.3
+## + fBodyAccMag.std..                5 1653.5
+## + tGravityAcc.arCoeff...Z.2        5 1653.5
+## + tGravityAcc.mean...Y             5 1655.0
+## + tBodyAccJerkMag.energy..         5 1655.8
+## + tGravityAcc.max...Z              5 1656.9
+## + tBodyAccJerk.sma..               5 1657.0
+## + angle.Z.gravityMean.             5 1658.8
+## + tGravityAcc.mean...Z             5 1659.1
+## &lt;none&gt;                               1659.6
+## + angle.X.gravityMean.             5 1660.6
+## + fBodyAccJerk.bandsEnergy...1.8   5 1661.3
+## + tGravityAcc.min...Z              5 1661.5
+## + tGravityAcc.energy...X           5 1661.9
+## + fBodyAccJerk.entropy...X         5 1662.7
+## + tGravityAcc.arCoeff...Y.1        5 1662.9
+## + tGravityAcc.max...X              5 1664.0
+## + tBodyAccMag.std..                5 1664.0
+## + tGravityAccMag.std..             5 1664.0
+## + tGravityAcc.energy...Y           5 1664.1
+## + tBodyAccMag.mad..                5 1665.9
+## + tGravityAccMag.mad..             5 1665.9
+## + fBodyAccMag.sma..                5 1666.1
+## + fBodyAcc.energy...X              5 1667.4
+## + fBodyAccJerk.bandsEnergy...1.24  5 1668.0
+## + fBodyAccMag.mad..                5 1668.3
+## + tGravityAcc.mean...X             5 1668.5
+## + fBodyAccJerk.std...X             5 1668.7
+## + tBodyAccJerk.energy...X          5 1669.9
+## + fBodyAccJerk.max...X             5 1670.0
+## + fBodyAccJerk.mad...X             5 1670.9
+## + fBodyAcc.bandsEnergy...1.16      5 1671.6
+## + fBodyAccJerk.iqr...X             5 1672.5
+## + tBodyAccJerk.std...X             5 1674.8
+## + tBodyAccJerk.mad...X             5 1675.0
+## + tGravityAcc.energy...Z           5 1678.7
+## 
+## Step:  AIC=1629.32
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy.. + 
+##     tGravityAcc.arCoeff...X.2 + tGravityAcc.entropy...Y + tGravityAcc.arCoeff...Z.3 + 
+##     tGravityAcc.max...Y + fBodyAcc.mad...X + tBodyAccJerkMag.entropy..
+## 
+##                                   Df    AIC
+## + fBodyAccJerk.bandsEnergy...1.16  5 1604.4
+## + fBodyGyro.maxInds.Z              5 1619.0
+## + tGravityAcc.min...Y              5 1621.0
+## + fBodyAccMag.std..                5 1621.2
+## + fBodyAccJerk.iqr...X             5 1626.2
+## + fBodyAcc.energy...X              5 1626.3
+## + angle.X.gravityMean.             5 1626.5
+## + tGravityAcc.mean...Y             5 1626.8
+## + tGravityAcc.max...Z              5 1628.1
+## + fBodyAccMag.sma..                5 1628.8
+## &lt;none&gt;                               1629.3
+## + tGravityAcc.energy...Z           5 1629.6
+## + angle.Z.gravityMean.             5 1629.9
+## + tBodyAccMag.std..                5 1630.0
+## + tGravityAccMag.std..             5 1630.0
+## + fBodyAccJerk.max...X             5 1630.4
+## + tGravityAcc.arCoeff...Z.1        5 1630.6
+## + tGravityAcc.mean...Z             5 1630.7
+## + tGravityAcc.arCoeff...Z.2        5 1630.9
+## + tBodyAccJerk.mad...X             5 1631.3
+## + fBodyAcc.bandsEnergy...1.16      5 1631.5
+## + tGravityAcc.arCoeff...Y.1        5 1632.7
+## + tGravityAcc.min...Z              5 1632.9
+## + fBodyAccJerk.bandsEnergy...1.8   5 1633.2
+## + tBodyAccMag.mad..                5 1633.6
+## + tGravityAccMag.mad..             5 1633.6
+## + fBodyAccJerk.std...X             5 1634.1
+## + tGravityAcc.energy...X           5 1634.1
+## + tGravityAcc.energy...Y           5 1635.2
+## + fBodyAccMag.mad..                5 1635.3
+## + tBodyAccJerk.std...X             5 1635.9
+## + tBodyAccJerk.energy...X          5 1636.4
+## + tBodyAccJerk.sma..               5 1637.9
+## + tBodyAccJerkMag.energy..         5 1638.3
+## + fBodyAccJerk.mad...X             5 1638.4
+## + tGravityAcc.mean...X             5 1638.9
+## + fBodyAccJerk.bandsEnergy...1.24  5 1639.3
+## + fBodyAccJerk.entropy...X         5 1640.4
+## + tGravityAcc.max...X              5 1645.9
+## 
+## Step:  AIC=1604.36
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy.. + 
+##     tGravityAcc.arCoeff...X.2 + tGravityAcc.entropy...Y + tGravityAcc.arCoeff...Z.3 + 
+##     tGravityAcc.max...Y + fBodyAcc.mad...X + tBodyAccJerkMag.entropy.. + 
+##     fBodyAccJerk.bandsEnergy...1.16
+## 
+##                                   Df    AIC
+## + fBodyAcc.energy...X              5 1568.8
+## + fBodyAcc.bandsEnergy...1.16      5 1580.5
+## + fBodyAccJerk.bandsEnergy...1.8   5 1592.2
+## + fBodyAccJerk.max...X             5 1596.6
+## + tGravityAcc.max...Z              5 1598.0
+## + tGravityAcc.min...Y              5 1598.2
+## + fBodyAccMag.std..                5 1598.9
+## + tBodyAccJerk.mad...X             5 1599.2
+## + fBodyGyro.maxInds.Z              5 1599.7
+## + angle.Z.gravityMean.             5 1600.3
+## + tGravityAcc.mean...Z             5 1600.6
+## + tGravityAcc.mean...Y             5 1601.8
+## + tBodyAccJerk.energy...X          5 1602.2
+## + tBodyAccMag.std..                5 1603.0
+## + tGravityAccMag.std..             5 1603.0
+## + tGravityAcc.energy...Z           5 1603.2
+## + angle.X.gravityMean.             5 1604.0
+## &lt;none&gt;                               1604.4
+## + tGravityAcc.min...Z              5 1604.5
+## + tBodyAccJerk.std...X             5 1605.1
+## + tGravityAcc.arCoeff...Z.2        5 1605.2
+## + tGravityAcc.arCoeff...Z.1        5 1606.6
+## + tGravityAcc.energy...X           5 1606.8
+## + tGravityAcc.arCoeff...Y.1        5 1607.1
+## + tGravityAcc.mean...X             5 1607.3
+## + fBodyAccJerk.bandsEnergy...1.24  5 1608.2
+## + fBodyAccJerk.std...X             5 1609.6
+## + fBodyAccJerk.iqr...X             5 1609.8
+## + tGravityAcc.energy...Y           5 1609.9
+## + tGravityAcc.max...X              5 1609.9
+## + fBodyAccMag.mad..                5 1610.4
+## + fBodyAccMag.sma..                5 1612.1
+## + tBodyAccMag.mad..                5 1612.9
+## + tGravityAccMag.mad..             5 1612.9
+## + fBodyAccJerk.entropy...X         5 1614.0
+## + tBodyAccJerk.sma..               5 1615.8
+## + fBodyAccJerk.mad...X             5 1626.0
+## + tBodyAccJerkMag.energy..         5 1626.0
+## 
+## Step:  AIC=1568.84
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy.. + 
+##     tGravityAcc.arCoeff...X.2 + tGravityAcc.entropy...Y + tGravityAcc.arCoeff...Z.3 + 
+##     tGravityAcc.max...Y + fBodyAcc.mad...X + tBodyAccJerkMag.entropy.. + 
+##     fBodyAccJerk.bandsEnergy...1.16 + fBodyAcc.energy...X
+## 
+##                                   Df    AIC
+## + fBodyAccJerk.bandsEnergy...1.8   5 1541.3
+## + fBodyAccMag.std..                5 1550.6
+## + tBodyAccMag.std..                5 1559.0
+## + tGravityAccMag.std..             5 1559.0
+## + tBodyAccMag.mad..                5 1563.2
+## + tGravityAccMag.mad..             5 1563.2
+## + fBodyGyro.maxInds.Z              5 1563.6
+## + angle.Z.gravityMean.             5 1566.2
+## + fBodyAccJerk.iqr...X             5 1566.4
+## + tGravityAcc.mean...Y             5 1566.9
+## + tGravityAcc.min...Y              5 1568.3
+## &lt;none&gt;                               1568.8
+## + angle.X.gravityMean.             5 1569.6
+## + fBodyAccMag.sma..                5 1570.0
+## + tBodyAccJerk.mad...X             5 1572.4
+## + tGravityAcc.arCoeff...Z.2        5 1572.8
+## + tGravityAcc.arCoeff...Z.1        5 1573.1
+## + tBodyAccJerk.std...X             5 1573.9
+## + tGravityAcc.arCoeff...Y.1        5 1574.0
+## + fBodyAccJerk.max...X             5 1574.3
+## + tGravityAcc.energy...Y           5 1575.0
+## + fBodyAccJerk.mad...X             5 1575.1
+## + fBodyAccJerk.std...X             5 1575.5
+## + tBodyAccJerk.sma..               5 1575.8
+## + tBodyAccJerk.energy...X          5 1576.0
+## + tGravityAcc.energy...X           5 1576.2
+## + fBodyAccMag.mad..                5 1576.8
+## + fBodyAccJerk.bandsEnergy...1.24  5 1577.6
+## + tGravityAcc.mean...X             5 1577.9
+## + tGravityAcc.max...X              5 1578.8
+## + tBodyAccJerkMag.energy..         5 1580.8
+## + fBodyAcc.bandsEnergy...1.16      5 1581.6
+## + tGravityAcc.energy...Z           5 1583.9
+## + tGravityAcc.max...Z              5 1586.1
+## + tGravityAcc.mean...Z             5 1586.2
+## + tGravityAcc.min...Z              5 1589.4
+## + fBodyAccJerk.entropy...X         5 1594.2
+## 
+## Step:  AIC=1541.31
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy.. + 
+##     tGravityAcc.arCoeff...X.2 + tGravityAcc.entropy...Y + tGravityAcc.arCoeff...Z.3 + 
+##     tGravityAcc.max...Y + fBodyAcc.mad...X + tBodyAccJerkMag.entropy.. + 
+##     fBodyAccJerk.bandsEnergy...1.16 + fBodyAcc.energy...X + fBodyAccJerk.bandsEnergy...1.8
+## 
+##                                   Df    AIC
+## + fBodyAccMag.std..                5 1516.5
+## + fBodyGyro.maxInds.Z              5 1522.1
+## + tBodyAccMag.std..                5 1524.3
+## + tGravityAccMag.std..             5 1524.3
+## + fBodyAccJerk.iqr...X             5 1532.9
+## + tGravityAcc.max...Z              5 1533.3
+## + tGravityAcc.arCoeff...Z.1        5 1533.5
+## + tGravityAcc.arCoeff...Z.2        5 1534.3
+## + tGravityAcc.mean...Y             5 1534.5
+## + angle.X.gravityMean.             5 1534.7
+## + tBodyAccMag.mad..                5 1534.8
+## + tGravityAccMag.mad..             5 1534.8
+## + angle.Z.gravityMean.             5 1535.7
+## + tBodyAccJerk.energy...X          5 1536.5
+## + tGravityAcc.mean...Z             5 1536.5
+## + fBodyAccMag.sma..                5 1538.7
+## + fBodyAccJerk.bandsEnergy...1.24  5 1538.7
+## + tGravityAcc.energy...Y           5 1538.8
+## + tGravityAcc.min...Z              5 1538.8
+## + tGravityAcc.min...Y              5 1538.9
+## + tBodyAccJerk.mad...X             5 1539.5
+## + tBodyAccJerk.std...X             5 1540.4
+## + fBodyAccJerk.mad...X             5 1540.8
+## &lt;none&gt;                               1541.3
+## + tGravityAcc.energy...Z           5 1541.5
+## + tGravityAcc.arCoeff...Y.1        5 1541.7
+## + fBodyAcc.bandsEnergy...1.16      5 1542.7
+## + fBodyAccJerk.std...X             5 1543.1
+## + tGravityAcc.max...X              5 1543.3
+## + fBodyAccMag.mad..                5 1543.7
+## + tBodyAccJerk.sma..               5 1543.7
+## + tGravityAcc.mean...X             5 1543.7
+## + tBodyAccJerkMag.energy..         5 1544.2
+## + tGravityAcc.energy...X           5 1545.0
+## + fBodyAccJerk.max...X             5 1545.2
+## + fBodyAccJerk.entropy...X         5 1546.7
+## 
+## Step:  AIC=1516.51
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy.. + 
+##     tGravityAcc.arCoeff...X.2 + tGravityAcc.entropy...Y + tGravityAcc.arCoeff...Z.3 + 
+##     tGravityAcc.max...Y + fBodyAcc.mad...X + tBodyAccJerkMag.entropy.. + 
+##     fBodyAccJerk.bandsEnergy...1.16 + fBodyAcc.energy...X + fBodyAccJerk.bandsEnergy...1.8 + 
+##     fBodyAccMag.std..
+## 
+##                                   Df    AIC
+## + tBodyAccJerk.sma..               5 1506.6
+## + tBodyAccJerkMag.energy..         5 1506.9
+## + tGravityAcc.arCoeff...Z.1        5 1513.2
+## + tGravityAcc.arCoeff...Z.2        5 1513.5
+## + fBodyGyro.maxInds.Z              5 1515.9
+## &lt;none&gt;                               1516.5
+## + tGravityAcc.mean...Y             5 1516.8
+## + tGravityAcc.min...Y              5 1519.3
+## + tBodyAccMag.std..                5 1520.5
+## + tGravityAccMag.std..             5 1520.5
+## + fBodyAccJerk.std...X             5 1520.8
+## + tGravityAcc.energy...X           5 1521.3
+## + fBodyAccJerk.iqr...X             5 1521.6
+## + fBodyAccMag.sma..                5 1521.7
+## + tGravityAcc.arCoeff...Y.1        5 1521.9
+## + angle.Z.gravityMean.             5 1521.9
+## + tGravityAcc.max...Z              5 1522.4
+## + fBodyAccJerk.mad...X             5 1523.8
+## + tGravityAcc.max...X              5 1523.8
+## + tGravityAcc.mean...Z             5 1524.0
+## + tBodyAccMag.mad..                5 1524.0
+## + tGravityAccMag.mad..             5 1524.0
+## + tGravityAcc.energy...Y           5 1524.1
+## + fBodyAccMag.mad..                5 1525.0
+## + tGravityAcc.min...Z              5 1525.1
+## + fBodyAcc.bandsEnergy...1.16      5 1526.9
+## + tBodyAccJerk.std...X             5 1527.0
+## + angle.X.gravityMean.             5 1527.1
+## + tGravityAcc.mean...X             5 1527.1
+## + fBodyAccJerk.entropy...X         5 1527.3
+## + tBodyAccJerk.mad...X             5 1527.9
+## + fBodyAccJerk.bandsEnergy...1.24  5 1528.1
+## + fBodyAccJerk.max...X             5 1528.8
+## + tBodyAccJerk.energy...X          5 1529.3
+## + tGravityAcc.energy...Z           5 1539.7
+## 
+## Step:  AIC=1506.59
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy.. + 
+##     tGravityAcc.arCoeff...X.2 + tGravityAcc.entropy...Y + tGravityAcc.arCoeff...Z.3 + 
+##     tGravityAcc.max...Y + fBodyAcc.mad...X + tBodyAccJerkMag.entropy.. + 
+##     fBodyAccJerk.bandsEnergy...1.16 + fBodyAcc.energy...X + fBodyAccJerk.bandsEnergy...1.8 + 
+##     fBodyAccMag.std.. + tBodyAccJerk.sma..
+## 
+##                                   Df    AIC
+## + fBodyGyro.maxInds.Z              5 1496.3
+## + tBodyAccJerk.mad...X             5 1498.5
+## + tGravityAcc.mean...Y             5 1500.7
+## + tGravityAcc.min...Y              5 1503.4
+## &lt;none&gt;                               1506.6
+## + angle.X.gravityMean.             5 1507.5
+## + tGravityAcc.arCoeff...Z.1        5 1508.2
+## + tGravityAcc.max...Z              5 1508.8
+## + tGravityAcc.arCoeff...Z.2        5 1509.2
+## + tGravityAcc.mean...Z             5 1509.7
+## + tGravityAcc.energy...Y           5 1509.7
+## + tGravityAcc.energy...X           5 1510.7
+## + fBodyAccJerk.max...X             5 1510.8
+## + tBodyAccJerkMag.energy..         5 1511.2
+## + tGravityAcc.arCoeff...Y.1        5 1511.7
+## + fBodyAcc.bandsEnergy...1.16      5 1511.8
+## + tGravityAcc.mean...X             5 1512.3
+## + tBodyAccMag.std..                5 1513.0
+## + tGravityAccMag.std..             5 1513.0
+## + tGravityAcc.min...Z              5 1513.4
+## + tBodyAccJerk.std...X             5 1513.6
+## + fBodyAccJerk.bandsEnergy...1.24  5 1513.6
+## + fBodyAccJerk.std...X             5 1513.7
+## + fBodyAccJerk.iqr...X             5 1513.8
+## + tBodyAccJerk.energy...X          5 1514.0
+## + fBodyAccMag.sma..                5 1514.1
+## + angle.Z.gravityMean.             5 1514.3
+## + tGravityAcc.max...X              5 1514.3
+## + fBodyAccJerk.entropy...X         5 1514.5
+## + fBodyAccMag.mad..                5 1515.2
+## + tBodyAccMag.mad..                5 1515.3
+## + tGravityAccMag.mad..             5 1515.3
+## + fBodyAccJerk.mad...X             5 1518.3
+## + tGravityAcc.energy...Z           5 1521.9
+## 
+## Step:  AIC=1496.29
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy.. + 
+##     tGravityAcc.arCoeff...X.2 + tGravityAcc.entropy...Y + tGravityAcc.arCoeff...Z.3 + 
+##     tGravityAcc.max...Y + fBodyAcc.mad...X + tBodyAccJerkMag.entropy.. + 
+##     fBodyAccJerk.bandsEnergy...1.16 + fBodyAcc.energy...X + fBodyAccJerk.bandsEnergy...1.8 + 
+##     fBodyAccMag.std.. + tBodyAccJerk.sma.. + fBodyGyro.maxInds.Z
+## 
+##                                   Df    AIC
+## + tBodyAccJerk.mad...X             5 1485.2
+## + angle.X.gravityMean.             5 1491.8
+## &lt;none&gt;                               1496.3
+## + tGravityAcc.arCoeff...Y.1        5 1497.2
+## + tBodyAccJerk.energy...X          5 1497.5
+## + fBodyAccJerk.bandsEnergy...1.24  5 1497.8
+## + fBodyAccJerk.max...X             5 1497.9
+## + tGravityAcc.max...X              5 1498.4
+## + tGravityAcc.energy...X           5 1498.4
+## + tGravityAcc.mean...Y             5 1499.1
+## + tGravityAcc.energy...Y           5 1499.3
+## + tGravityAcc.mean...X             5 1499.5
+## + fBodyAccJerk.std...X             5 1500.3
+## + tBodyAccJerk.std...X             5 1500.4
+## + fBodyAccJerk.iqr...X             5 1500.5
+## + tGravityAcc.arCoeff...Z.1        5 1500.5
+## + fBodyAcc.bandsEnergy...1.16      5 1500.9
+## + tBodyAccJerkMag.energy..         5 1501.1
+## + fBodyAccMag.sma..                5 1501.7
+## + tGravityAcc.arCoeff...Z.2        5 1501.7
+## + tBodyAccMag.std..                5 1502.1
+## + tGravityAccMag.std..             5 1502.1
+## + fBodyAccJerk.mad...X             5 1502.1
+## + fBodyAccMag.mad..                5 1502.4
+## + tGravityAcc.min...Z              5 1502.9
+## + tGravityAcc.max...Z              5 1503.4
+## + tGravityAcc.min...Y              5 1503.4
+## + tGravityAcc.mean...Z             5 1503.5
+## + angle.Z.gravityMean.             5 1504.3
+## + tBodyAccMag.mad..                5 1504.3
+## + tGravityAccMag.mad..             5 1504.3
+## + tGravityAcc.energy...Z           5 1507.9
+## + fBodyAccJerk.entropy...X         5 1509.4
+## 
+## Step:  AIC=1485.17
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy.. + 
+##     tGravityAcc.arCoeff...X.2 + tGravityAcc.entropy...Y + tGravityAcc.arCoeff...Z.3 + 
+##     tGravityAcc.max...Y + fBodyAcc.mad...X + tBodyAccJerkMag.entropy.. + 
+##     fBodyAccJerk.bandsEnergy...1.16 + fBodyAcc.energy...X + fBodyAccJerk.bandsEnergy...1.8 + 
+##     fBodyAccMag.std.. + tBodyAccJerk.sma.. + fBodyGyro.maxInds.Z + 
+##     tBodyAccJerk.mad...X
+## 
+##                                   Df    AIC
+## + tGravityAcc.energy...X           5 1484.2
+## &lt;none&gt;                               1485.2
+## + tGravityAcc.energy...Y           5 1485.6
+## + tGravityAcc.arCoeff...Y.1        5 1487.9
+## + tGravityAcc.mean...Y             5 1488.9
+## + tGravityAcc.min...Y              5 1492.8
+## + fBodyAccJerk.std...X             5 1493.1
+## + tGravityAcc.arCoeff...Z.1        5 1493.5
+## + tGravityAcc.arCoeff...Z.2        5 1495.9
+## + tGravityAcc.energy...Z           5 1499.0
+## + tBodyAccJerk.std...X             5 1499.7
+## + tGravityAcc.mean...X             5 1499.7
+## + tGravityAcc.mean...Z             5 1499.8
+## + tGravityAcc.min...Z              5 1501.1
+## + fBodyAcc.bandsEnergy...1.16      5 1501.2
+## + tGravityAcc.max...Z              5 1501.4
+## + fBodyAccJerk.mad...X             5 1501.4
+## + tBodyAccJerkMag.energy..         5 1502.0
+## + angle.Z.gravityMean.             5 1503.0
+## + angle.X.gravityMean.             5 1503.6
+## + fBodyAccJerk.max...X             5 1503.7
+## + tBodyAccMag.mad..                5 1504.1
+## + tGravityAccMag.mad..             5 1504.1
+## + tBodyAccMag.std..                5 1504.3
+## + tGravityAccMag.std..             5 1504.3
+## + fBodyAccMag.sma..                5 1505.2
+## + tBodyAccJerk.energy...X          5 1506.0
+## + fBodyAccMag.mad..                5 1506.7
+## + fBodyAccJerk.entropy...X         5 1506.8
+## + tGravityAcc.max...X              5 1508.0
+## + fBodyAccJerk.bandsEnergy...1.24  5 1509.0
+## + fBodyAccJerk.iqr...X             5 1509.7
+## 
+## Step:  AIC=1484.15
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy.. + 
+##     tGravityAcc.arCoeff...X.2 + tGravityAcc.entropy...Y + tGravityAcc.arCoeff...Z.3 + 
+##     tGravityAcc.max...Y + fBodyAcc.mad...X + tBodyAccJerkMag.entropy.. + 
+##     fBodyAccJerk.bandsEnergy...1.16 + fBodyAcc.energy...X + fBodyAccJerk.bandsEnergy...1.8 + 
+##     fBodyAccMag.std.. + tBodyAccJerk.sma.. + fBodyGyro.maxInds.Z + 
+##     tBodyAccJerk.mad...X + tGravityAcc.energy...X
+## 
+##                                   Df    AIC
+## + tGravityAcc.energy...Z           5 1462.8
+## + angle.X.gravityMean.             5 1478.1
+## &lt;none&gt;                               1484.2
+## + tGravityAcc.energy...Y           5 1486.8
+## + tBodyAccJerk.energy...X          5 1487.0
+## + tGravityAcc.mean...X             5 1487.1
+## + tGravityAcc.mean...Y             5 1487.5
+## + tBodyAccJerkMag.energy..         5 1488.1
+## + tGravityAcc.arCoeff...Y.1        5 1488.7
+## + tGravityAcc.min...Y              5 1488.7
+## + tGravityAcc.min...Z              5 1489.7
+## + fBodyAccJerk.std...X             5 1489.9
+## + tGravityAcc.max...Z              5 1491.0
+## + angle.Z.gravityMean.             5 1491.2
+## + tBodyAccJerk.std...X             5 1491.2
+## + tBodyAccMag.std..                5 1491.7
+## + tGravityAccMag.std..             5 1491.7
+## + fBodyAccJerk.bandsEnergy...1.24  5 1492.2
+## + tGravityAcc.arCoeff...Z.1        5 1492.4
+## + tGravityAcc.mean...Z             5 1492.5
+## + tBodyAccMag.mad..                5 1492.9
+## + tGravityAccMag.mad..             5 1492.9
+## + fBodyAcc.bandsEnergy...1.16      5 1492.9
+## + fBodyAccMag.sma..                5 1493.1
+## + fBodyAccJerk.entropy...X         5 1493.5
+## + tGravityAcc.max...X              5 1493.5
+## + tGravityAcc.arCoeff...Z.2        5 1493.9
+## + fBodyAccMag.mad..                5 1494.5
+## + fBodyAccJerk.mad...X             5 1494.6
+## + fBodyAccJerk.iqr...X             5 1496.3
+## + fBodyAccJerk.max...X             5 1497.3
+## 
+## Step:  AIC=1462.77
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy.. + 
+##     tGravityAcc.arCoeff...X.2 + tGravityAcc.entropy...Y + tGravityAcc.arCoeff...Z.3 + 
+##     tGravityAcc.max...Y + fBodyAcc.mad...X + tBodyAccJerkMag.entropy.. + 
+##     fBodyAccJerk.bandsEnergy...1.16 + fBodyAcc.energy...X + fBodyAccJerk.bandsEnergy...1.8 + 
+##     fBodyAccMag.std.. + tBodyAccJerk.sma.. + fBodyGyro.maxInds.Z + 
+##     tBodyAccJerk.mad...X + tGravityAcc.energy...X + tGravityAcc.energy...Z
+## 
+##                                   Df    AIC
+## + tGravityAcc.mean...X             5 1461.8
+## &lt;none&gt;                               1462.8
+## + tGravityAcc.max...X              5 1464.8
+## + tGravityAcc.energy...Y           5 1466.7
+## + tGravityAcc.arCoeff...Z.1        5 1472.0
+## + fBodyAccJerk.entropy...X         5 1474.6
+## + tGravityAcc.min...Y              5 1475.1
+## + tGravityAcc.min...Z              5 1476.0
+## + tGravityAcc.arCoeff...Y.1        5 1477.6
+## + angle.X.gravityMean.             5 1477.7
+## + tBodyAccJerkMag.energy..         5 1478.1
+## + tBodyAccJerk.std...X             5 1479.8
+## + tGravityAcc.mean...Z             5 1479.9
+## + fBodyAccJerk.std...X             5 1479.9
+## + fBodyAccJerk.bandsEnergy...1.24  5 1480.1
+## + fBodyAcc.bandsEnergy...1.16      5 1480.2
+## + fBodyAccJerk.mad...X             5 1480.4
+## + tBodyAccJerk.energy...X          5 1480.5
+## + tGravityAcc.mean...Y             5 1480.5
+## + angle.Z.gravityMean.             5 1481.0
+## + tGravityAcc.arCoeff...Z.2        5 1481.6
+## + tGravityAcc.max...Z              5 1482.5
+## + tBodyAccMag.mad..                5 1484.0
+## + tGravityAccMag.mad..             5 1484.0
+## + fBodyAccJerk.iqr...X             5 1484.2
+## + fBodyAccMag.mad..                5 1486.1
+## + fBodyAccJerk.max...X             5 1487.8
+## + fBodyAccMag.sma..                5 1489.0
+## + tBodyAccMag.std..                5 1491.4
+## + tGravityAccMag.std..             5 1491.4
+## 
+## Step:  AIC=1461.8
+## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean. + 
+##     tGravityAcc.arCoeff...X.1 + tGravityAcc.arCoeff...Y.2 + fBodyAccMag.energy.. + 
+##     tGravityAcc.arCoeff...X.2 + tGravityAcc.entropy...Y + tGravityAcc.arCoeff...Z.3 + 
+##     tGravityAcc.max...Y + fBodyAcc.mad...X + tBodyAccJerkMag.entropy.. + 
+##     fBodyAccJerk.bandsEnergy...1.16 + fBodyAcc.energy...X + fBodyAccJerk.bandsEnergy...1.8 + 
+##     fBodyAccMag.std.. + tBodyAccJerk.sma.. + fBodyGyro.maxInds.Z + 
+##     tBodyAccJerk.mad...X + tGravityAcc.energy...X + tGravityAcc.energy...Z + 
+##     tGravityAcc.mean...X
+## 
+##                                   Df    AIC
+## &lt;none&gt;                               1461.8
+## + tGravityAcc.energy...Y           5 1463.5
+## + tBodyAccMag.mad..                5 1464.3
+## + tGravityAccMag.mad..             5 1464.3
+## + tBodyAccJerkMag.energy..         5 1466.3
+## + tBodyAccJerk.energy...X          5 1466.7
+## + tGravityAcc.arCoeff...Y.1        5 1467.0
+## + fBodyAccJerk.bandsEnergy...1.24  5 1467.8
+## + tBodyAccMag.std..                5 1468.3
+## + tGravityAccMag.std..             5 1468.3
+## + angle.Z.gravityMean.             5 1468.5
+## + fBodyAccMag.mad..                5 1468.7
+## + fBodyAccJerk.mad...X             5 1470.0
+## + fBodyAccJerk.std...X             5 1470.1
+## + fBodyAccJerk.max...X             5 1471.5
+## + tGravityAcc.arCoeff...Z.2        5 1471.9
+## + tGravityAcc.min...Y              5 1472.0
+## + tGravityAcc.mean...Y             5 1473.9
+## + angle.X.gravityMean.             5 1474.9
+## + tBodyAccJerk.std...X             5 1475.0
+## + fBodyAccJerk.entropy...X         5 1475.4
+## + fBodyAcc.bandsEnergy...1.16      5 1475.6
+## + tGravityAcc.min...Z              5 1475.9
+## + tGravityAcc.max...Z              5 1478.9
+## + tGravityAcc.mean...Z             5 1479.9
+## + tGravityAcc.arCoeff...Z.1        5 1481.9
+## + fBodyAccJerk.iqr...X             5 1482.1
+## + fBodyAccMag.sma..                5 1482.8
+## + tGravityAcc.max...X              5 1484.3</code></pre>
 <pre class="r"><code>newfeat=attr(terms(step_result), &quot;term.labels&quot;)
 
 fml_step_2=formula(paste(&quot;activity~&quot;,paste(newfeat[1:2],collapse=&quot;+&quot;)))
@@ -1069,7 +1306,7 @@ fml_step_3=formula(paste(&quot;activity~&quot;,paste(newfeat[1:3],collapse=&quot
 fml_step_2</code></pre>
 <pre><code>## activity ~ tBodyAcc.max...X + tGravityAcc.min...X</code></pre>
 <pre class="r"><code>fml_step_3</code></pre>
-<pre><code>## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + tGravityAcc.mean...Y</code></pre>
+<pre><code>## activity ~ tBodyAcc.max...X + tGravityAcc.min...X + angle.Y.gravityMean.</code></pre>
 </div>
 </div>
 <div id="test-performance-of-new-features-on-test-data-with-rf" class="section level3">
@@ -1078,9 +1315,9 @@ fml_step_2</code></pre>
 model_RF_3=randomForest(fml_step_3,data=train)
 
 mean(predict(model_RF_2,newdata=test)==test$activity)</code></pre>
-<pre><code>## [1] 0.8232094</code></pre>
+<pre><code>## [1] 0.8291024</code></pre>
 <pre class="r"><code>mean(predict(model_RF_3,newdata=test)==test$activity)</code></pre>
-<pre><code>## [1] 0.9224841</code></pre>
+<pre><code>## [1] 0.9292838</code></pre>
 <p>With two variables we achieve above 80% accuracy, and above 90% with three. Congrats!</p>
 </div>
 
